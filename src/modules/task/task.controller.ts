@@ -1,32 +1,33 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { TaskService } from './task.service';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 @Controller('api/task')
 export class TaskController {
   constructor(private taskSvc: TaskService) {}
 
   @Get()
-  public getTasks(): any {
+  public getTasks(): any[] {
     return this.taskSvc.getTasks();
   }
 
   @Get(":id")
-  public getTaskById(@Param("id") id): string {
-    return this.taskSvc.getTaskById(parseInt(id));
+  public getTaskById(@Param("id", ParseIntPipe) id:number): any {
+    return this.taskSvc.getTaskById(id);
   }
 
   @Post()
-  public insertTask(@Body() task:any) {
+  public insertTask(@Body() task:CreateTaskDto) {
     return this.taskSvc.insertTasks(task);
   }
 
   @Put(":id")
-  public updateTask(@Param("id") id:string, @Body() task:any) {
-    return this.taskSvc.updateTask(parseInt(id),task);
+  public updateTask(@Param("id", ParseIntPipe) id:number, @Body() task:any) {
+    return this.taskSvc.updateTask(id,task);
   }
 
   @Delete(":id")
-  public deleteTask(@Param("id") id:any) {
-    return this.taskSvc.deleteTask(parseInt(id));
+  public deleteTask(@Param("id", ParseIntPipe) id:number) {
+    return this.taskSvc.deleteTask(id);
   }
 }
