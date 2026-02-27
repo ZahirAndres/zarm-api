@@ -2,18 +2,21 @@ import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Par
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update.task.dto';
+import { Task } from './entities/task.entity';
+import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 
 @Controller('api/task')
+@ApiTags("Task")
 export class TaskController {
   constructor(private readonly taskSvc: TaskService) {}
 
   @Get()
-  public async getTasks(): Promise<any> {
+  public async getTasks(): Promise<Task[]> {
     return await this.taskSvc.getTasks();
   }
 
   @Get(":id")
-  public async getTaskById(@Param("id", ParseIntPipe) id:number): Promise<any>{
+  public async getTaskById(@Param("id", ParseIntPipe) id:number): Promise<Task>{
     const result = await this.taskSvc.getTaskById(id);
     console.log("resuldatos: ", result )
     if ( result == undefined )
@@ -23,20 +26,24 @@ export class TaskController {
   }
 
   @Post()
-  public async insertTask(@Body() task:CreateTaskDto) {
-    const result = this.taskSvc.insertTasks(task);
+  @ApiOperation({summary: 'Insert a task in the database'})
+  public async insertTask(@Body() task:CreateTaskDto): Promise<Task> {
+    const result = this.taskSvc.insertTask(task);
     if(result == undefined)
       throw new HttpException(`Error al insertar la tarea`, HttpStatus.INTERNAL_SERVER_ERROR);
     return result;
   }
 
   @Put("/:id")
-  public updateTask(@Param("id", ParseIntPipe) id:number, @Body() task:UpdateTaskDto) {
+  public updateTask(@Param("id", ParseIntPipe) id:number, @Body() task:UpdateTaskDto): Promise<Task> {
     return this.taskSvc.updateTask(id,task);
   }
 
   @Delete(":id")
-  public deleteTask(@Param("id", ParseIntPipe) id:number) {
-    return this.taskSvc.deleteTask(id);
+  public deleteTask(@Param("id", ParseIntPipe) id:number): Promise<boolean> {
+    const result = this.taskSvc.deleteTask(id);
+    if (!result)
+      throw new HttpException("No se puede eliminar la tarea",HttpStatus.NOT_FOUND)
+    return result
   }
 }
