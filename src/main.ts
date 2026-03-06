@@ -6,6 +6,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Habilitar CORS
+  app.enableCors();
+
   // pipe para realizar la validación de forma global
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true
@@ -13,12 +16,12 @@ async function bootstrap() {
 
   // configuracion swagger
   const config = new DocumentBuilder()
-  .setTitle('API con vulnerabilidades de seguridad')
-  .setDescription('Documentación de la API de pruebas')
-  .setVersion('1.0.0')
-  .addServer("http://127.0.0.1:3000","Servidor de pruebas")
-  .addServer("https://dominio.com","Servidor de producción")
-  .build()
+    .setTitle('API con vulnerabilidades de seguridad')
+    .setDescription('Documentación de la API de pruebas')
+    .setVersion('1.0.0')
+    .addServer("http://127.0.0.1:3000", "Servidor de pruebas")
+    .addServer("https://dominio.com", "Servidor de producción")
+    .build()
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
