@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/common/services/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entities/task.entity';
 import { UpdateTaskDto } from './dto/update.task.dto';
@@ -33,7 +33,7 @@ export class TaskService {
 
   async updateTask(id: number, taskUpdate: UpdateTaskDto): Promise<Task> {
     const task = await this.prisma.task.update({
-      where: {id: id},
+      where: { id: id },
       data: taskUpdate
     });
     return task;
@@ -41,7 +41,7 @@ export class TaskService {
 
   async deleteTask(id: number): Promise<Task> {
     const task = await this.prisma.task.delete({
-      where: {id}
+      where: { id }
     });
     return task;
   }
