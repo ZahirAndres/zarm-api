@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/common/services/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create.user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update.user.dto';
 import { Task } from '@prisma/client';
@@ -24,6 +24,7 @@ export class UserService {
         username: true,
         password: false,
         created_at: true,
+        refresh_token: true,
       }
     });
     return user

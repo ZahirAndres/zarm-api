@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
 import { User } from './entities/user.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -40,6 +40,7 @@ export class UserController {
     // Encriptar contraseña
     const encryptedPassword = await this.utilSvc.hashPassword(user.password);
     user.password = encryptedPassword
+    
     const result = await this.userSvc.insertUser(user);
     return result;
   }

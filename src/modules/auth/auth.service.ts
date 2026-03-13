@@ -1,8 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/common/services/prisma.service';
+import { User } from '../user/entities/user.entity';
 
 @Injectable({})
 export class AuthService {
-  login() {
-    return 'Autenticación correcta';
+
+  constructor (
+    private prisma: PrismaService,
+  ){ }
+
+  async login(username: string): Promise<User | null> {
+    const result = this.prisma.user.findFirst({
+      where: { username },
+      select: {
+        id: true,
+        name: true,
+        lastname: true,
+        username: false,
+        password: true,
+        created_at: true,
+      }
+    })
+    return result;
+  }
+
+  async saveRefreshToken(userId: number, refreshToken: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refresh_token: refreshToken },
+    });
   }
 }
