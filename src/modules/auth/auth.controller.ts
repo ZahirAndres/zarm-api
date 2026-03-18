@@ -1,10 +1,11 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login.user.dto';
 import { User } from '../user/entities/user.entity';
 import { UtilService } from 'src/common/services/util.service';
 import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -60,9 +61,11 @@ export class AuthController {
   }
 
   @Get("me")
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Extrae el ID del usuario desde el token y busca la información" })
-  public getProfile() {
-
+  public getProfile(@Req() request: any) {
+    const user = request['user'];
+    return user
   }
 
   public refreshToken() {

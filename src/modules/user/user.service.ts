@@ -14,7 +14,7 @@ export class UserService {
 
   private users: any[] = [];
 
-  async getUsers(): Promise<User[]> {
+  async getUsers(currentUserId:number): Promise<User[]> {
     const user = await this.prisma.user.findMany({
       orderBy: [{ name: "asc" }],
       select: {
@@ -25,6 +25,11 @@ export class UserService {
         password: false,
         created_at: true,
         refresh_token: true,
+      },
+      where: {
+        id: {
+          not: currentUserId
+        }
       }
     });
     return user

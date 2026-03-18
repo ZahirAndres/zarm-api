@@ -1,13 +1,16 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
 import { User } from './entities/user.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UtilService } from 'src/common/services/util.service';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { Request } from 'express';
 
 @Controller('api/user')
 @ApiTags("User")
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(
     private readonly userSvc: UserService,
@@ -15,8 +18,9 @@ export class UserController {
   ) { }
 
   @Get()
-  public async getUsers(): Promise<User[]> {
-    return await this.userSvc.getUsers();
+  public async getUsers(@Req() request:any): Promise<User[]> {
+    const user = request['user']
+    return await this.userSvc.getUsers(user.id);
   }
 
   @Get(":id")
