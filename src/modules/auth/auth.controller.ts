@@ -31,7 +31,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Verifica las credenciales y genera un JWT y un RefreshToken" })
   public async login(@Body() user: LoginUserDto): Promise<Object | null> {
-    const result = await this.authSvc.login(user.username);
+    const result = await this.authSvc.getUserByUsername(user.username);
 
     if(result == undefined)
       throw new HttpException(`${user.username} no existe`, HttpStatus.UNAUTHORIZED)

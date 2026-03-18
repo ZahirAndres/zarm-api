@@ -15,12 +15,15 @@ constructor ( private jwtSrv: JwtService ){ }
  }
 
  public async generateJWT(payload: any, expiresIn: any = '60s'): Promise<string> {
-   return await this.jwtSrv.signAsync(payload, { expiresIn });
+   return await this.jwtSrv.signAsync(payload, { 
+    secret: process.env.JWT_SECRET,
+    expiresIn: expiresIn
+  });
  }
 
  public async getPayloadJWT(token: string): Promise<any>{
    try {
-     return await this.jwtSrv.verifyAsync(token);
+     return await this.jwtSrv.verifyAsync(token, {secret: process.env.JWT_SECRET});
    } catch (error) {
      return null;
    }

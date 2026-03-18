@@ -9,7 +9,7 @@ export class AuthService {
     private prisma: PrismaService,
   ){ }
 
-  async login(username: string): Promise<User | null> {
+  async getUserByUsername(username: string): Promise<User | null> {
     const result = this.prisma.user.findFirst({
       where: { username },
       select: {
