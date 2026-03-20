@@ -4,16 +4,16 @@ import { CreateTaskDto } from './dto/create-task.dto';
 
 @Controller('api/task')
 export class TaskController {
-  constructor(private taskSvc: TaskService) {}
+  constructor(private readonly taskSvc: TaskService) {}
 
   @Get()
-  public getTasks(): any[] {
-    return this.taskSvc.getTasks();
+  public async getTasks(): Promise<any> {
+    return await this.taskSvc.getTasks();
   }
 
   @Get(":id")
-  public getTaskById(@Param("id", ParseIntPipe) id:number): any {
-    return this.taskSvc.getTaskById(id);
+  public async getTaskById(@Param("id", ParseIntPipe) id:number): Promise<any>{
+    return await this.taskSvc.getTaskById(id);
   }
 
   @Post()
