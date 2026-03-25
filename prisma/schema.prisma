@@ -13,6 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Rol {
+  id Int @default(autoincrement()) @id
+  description String @db.VarChar(200)
+  status Boolean
+  users User[]
+}
+
 model User {
   id            Int      @default(autoincrement()) @id
   name          String   @db.VarChar(200)
@@ -21,6 +28,8 @@ model User {
   password      String
   refresh_token String?   @db.Text
   created_at    DateTime @default(now())
+  rol_id Int?
+  rol Rol? @relation(fields: [rol_id], references: [id])
   tasks         Task[]
 }
 

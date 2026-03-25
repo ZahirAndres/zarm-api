@@ -49,7 +49,7 @@ export class AuthController {
       lastname: result.lastname,
       created_date: result.created_at,
     }
-    const accessToken = await this.utilSvc.generateJWT(payload, '60s');
+    const accessToken = await this.utilSvc.generateJWT(payload, '1h');
     const refreshToken = await this.utilSvc.generateJWT(payload, '7d');
 
     await this.authSvc.saveRefreshToken(result.id, refreshToken);

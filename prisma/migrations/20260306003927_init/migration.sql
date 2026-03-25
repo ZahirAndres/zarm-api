@@ -5,6 +5,7 @@ CREATE TABLE "User" (
     "lastname" VARCHAR(250) NOT NULL,
     "username" VARCHAR(100) NOT NULL,
     "password" TEXT NOT NULL,
+    "refresh_token" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -22,5 +23,9 @@ CREATE TABLE "Task" (
     CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
 -- AddForeignKey
 ALTER TABLE "Task" ADD CONSTRAINT "Task_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+

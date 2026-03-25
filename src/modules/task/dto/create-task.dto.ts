@@ -32,8 +32,5 @@ export class CreateTaskDto {
     @ApiProperty({ description: 'priority', example: false})
     priority: boolean;
 
-    @IsNumber({},{ message: "El ID del usuario debe ser un número"})
-    @IsInt()
-    @ApiProperty({ description: 'user_id', example: 1})
     user_id: number;
 }
