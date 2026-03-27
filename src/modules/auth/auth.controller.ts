@@ -6,6 +6,7 @@ import { User } from '../user/entities/user.entity';
 import { UtilService } from 'src/common/services/util.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/common/guards/auth.guard';
+import { AppException } from 'src/common/exception/app.exception';
 
 @Controller('api/auth')
 export class AuthController {
@@ -43,16 +44,22 @@ export class AuthController {
     if(!validate_pass)
       throw new HttpException("Credenciales incorrectas", HttpStatus.UNAUTHORIZED);
 
-    const payload = { 
+    const payload: any = { 
       id: result.id,
       name: result.name,
       lastname: result.lastname,
       created_date: result.created_at,
     }
-    const accessToken = await this.utilSvc.generateJWT(payload, '1h');
-    const refreshToken = await this.utilSvc.generateJWT(payload, '7d');
-
+    var refreshToken = await this.utilSvc.generateJWT(payload, '7d');
+    const hash = await this.utilSvc.hash(refreshToken);
+    await this.authSvc.updateHash(result.id,hash)
     await this.authSvc.saveRefreshToken(result.id, refreshToken);
+
+    payload.hash = hash;
+    refreshToken = hash;
+
+    const accessToken = await this.utilSvc.generateJWT(payload, '1h');
+
 
     return { 
       accessToken,
@@ -68,11 +75,31 @@ export class AuthController {
     return user
   }
 
-  public refreshToken() {
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  public async refreshToken(@Req() request: any) {
+    // Obtener el usuario en sesión
+    const userSession = request['user'];
+    const user = await this.authSvc.getUserById(userSession.id)
+    if(!user || !user.hash) throw new AppException('Acceso Denegado',HttpStatus.FORBIDDEN, '0')
+    // Comparar el token recibido con el token guardado
+    if(userSession.hash != user.hash) throw new AppException('Token inválido', HttpStatus.FORBIDDEN, '0')
 
+    // Si el token es válido se generan nuevos tokens
+    // hacer esto con ayuda de utils
+    return {
+      access_token: '',
+      refresh_token: ''
+    }
   }
 
-  public logout() {
-
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard)
+  public async logout(@Req() request: any) {
+    const session = request['user'];
+    const user = await this.authSvc.updateHash(session.id, null);
+    return user;
   }
 }

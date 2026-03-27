@@ -18,7 +18,7 @@ export class UserController {
   ) { }
 
   @Get()
-  public async getUsers(@Req() request:any): Promise<User[]> {
+  public async getUsers(@Req() request: any): Promise<User[]> {
     const user = request['user']
     return await this.userSvc.getUsers(user.id);
   }
@@ -42,9 +42,9 @@ export class UserController {
       throw new HttpException('El usuario ya existe', HttpStatus.CONFLICT);
     }
     // Encriptar contraseña
-    const encryptedPassword = await this.utilSvc.hashPassword(user.password);
+    const encryptedPassword = await this.utilSvc.hash(user.password);
     user.password = encryptedPassword
-    
+
     const result = await this.userSvc.insertUser(user);
     return result;
   }

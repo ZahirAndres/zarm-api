@@ -5,9 +5,9 @@ import { User } from '../user/entities/user.entity';
 @Injectable({})
 export class AuthService {
 
-  constructor (
+  constructor(
     private prisma: PrismaService,
-  ){ }
+  ) { }
 
   async getUserByUsername(username: string): Promise<User | null> {
     const result = this.prisma.user.findFirst({
@@ -23,6 +23,20 @@ export class AuthService {
     })
     return result;
   }
+
+  public async getUserById(id: number):  Promise<User | null> {
+    return await this.prisma.user.findFirst({
+      where: { id }
+    })
+  }
+
+   public async updateHash(id: number, hash: string | null): Promise<User | null> {
+    return await this.prisma.user.update({
+      where: { id },
+      data: { hash: hash ?? '' }
+    })
+  }
+
 
   async saveRefreshToken(userId: number, refreshToken: string): Promise<void> {
     await this.prisma.user.update({
