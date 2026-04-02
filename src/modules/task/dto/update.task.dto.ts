@@ -1,8 +1,5 @@
 import { 
     IsBoolean,
-    IsInt,
-    IsNotEmpty,
-    IsNumber,
     IsOptional,
     IsString,
     MaxLength,

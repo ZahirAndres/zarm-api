@@ -11,7 +11,7 @@ export class UtilService {
   }
 
   public async checkPassword(password: string, hash: string): Promise<boolean> {
-    return await bcryp.compareSync(password, hash)
+    return await bcryp.compare(password, hash)
   }
 
   public async generateJWT(payload: any, expiresIn: any = '60s'): Promise<string> {

@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entities/task.entity';
@@ -7,11 +7,8 @@ import { UpdateTaskDto } from './dto/update.task.dto';
 @Injectable()
 export class TaskService {
   constructor(
-    @Inject('PG_CONNECTION') private db: any,
     private prisma: PrismaService,
   ) { }
-
-  private tasks: any[] = [];
 
   async getTasks(user_id: number) {
     return this.prisma.task.findMany({

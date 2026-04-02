@@ -10,7 +10,7 @@ export class AuthService {
   ) { }
 
   async getUserByUsername(username: string): Promise<User | null> {
-    const result = this.prisma.user.findFirst({
+    const result = await this.prisma.user.findFirst({
       where: { username },
       select: {
         id: true,
@@ -38,10 +38,4 @@ export class AuthService {
   }
 
 
-  async saveRefreshToken(userId: number, refreshToken: string): Promise<void> {
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { refresh_token: refreshToken },
-    });
-  }
 }

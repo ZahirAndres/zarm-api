@@ -3,32 +3,44 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AllExceptionFilter } from './common/filters/http-exceptions.filter';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Habilitar CORS
-  app.enableCors();
+  // V-15: Headers de seguridad HTTP
+  app.use(helmet());
+
+  // Habilitar CORS con orígenes específicos
+  app.enableCors({
+    origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:4200', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+  });
 
   // pipe para realizar la validación de forma global
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
   }))
 
   // Uso de filtros
   app.useGlobalFilters(new AllExceptionFilter);
 
-  // configuracion swagger
-  const config = new DocumentBuilder()
-    .setTitle('API con vulnerabilidades de seguridad')
-    .setDescription('Documentación de la API de pruebas')
-    .setVersion('1.0.0')
-    .addServer("http://127.0.0.1:3000", "Servidor de pruebas")
-    .addServer("https://dominio.com", "Servidor de producción")
-    .build()
+  // V-16: Swagger solo disponible en desarrollo
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('ZARM API')
+      .setDescription('Documentación de la API')
+      .setVersion('1.0.0')
+      .addBearerAuth()
+      .addServer("http://127.0.0.1:3000", "Servidor de pruebas")
+      .build()
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   await app.listen(process.env.PORT ?? 3000);
 }

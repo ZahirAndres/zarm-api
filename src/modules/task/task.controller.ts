@@ -3,7 +3,7 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update.task.dto';
 import { Task } from './entities/task.entity';
-import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { User } from '@prisma/client';
 
@@ -15,15 +15,14 @@ export class TaskController {
 
   @Get()
   public async getTasks(@Req() request:any): Promise<Task[]> {
-    const user = request('user') as User
+    const user = request['user'] as User
     return await this.taskSvc.getTasks(user.id);
   }
 
   @Get(":id")
   public async getTaskById(@Param("id", ParseIntPipe) id:number,@Req() request:any): Promise<Task>{
-    const user = request('user') as User
+    const user = request['user'] as User
     const result = await this.taskSvc.getTaskById(id, user.id);
-    console.log("resuldatos: ", result )
     if ( result == undefined )
     //  throw new NotFoundException(`Tarea con ID ${id} no encontrada`);
       throw new HttpException(`Tarea con ID ${id} no encontrada`, HttpStatus.NOT_FOUND)
@@ -33,7 +32,7 @@ export class TaskController {
   @Post()
   @ApiOperation({summary: 'Insert a task in the database'})
   public async insertTask(@Body() task:CreateTaskDto, @Req() request:any): Promise<Task> {
-    const user = request('user')
+    const user = request['user']
     task.user_id = user.id;
     const result = this.taskSvc.insertTask(task);
     if(result == undefined)
@@ -43,17 +42,17 @@ export class TaskController {
 
   @Put("/:id")
   public updateTask(@Param("id", ParseIntPipe) id:number, @Body() task:UpdateTaskDto, @Req() request:any ): Promise<Task> {
-    const user = request('user')
+    const user = request['user']
     return this.taskSvc.updateTask(id,task, user.id);
   }
 
   @Delete(":id")
   public async deleteTask(@Param("id", ParseIntPipe) id:number, @Req() request:any): Promise<boolean> {
     try {
-      const user = request('user')
+      const user = request['user']
       await this.taskSvc.deleteTask(id, user.id);
     } catch (error) {
-      throw new HttpException("Task not founf", HttpStatus.NOT_FOUND)
+      throw new HttpException("Task not found", HttpStatus.NOT_FOUND)
     }
     return true
   }

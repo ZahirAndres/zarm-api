@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { User } from './entities/user.entity';
@@ -8,11 +8,8 @@ import { Task } from '@prisma/client';
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('PG_CONNECTION') private db: any,
     private prisma: PrismaService,
   ) { }
-
-  private users: any[] = [];
 
   async getUsers(currentUserId:number): Promise<User[]> {
     const user = await this.prisma.user.findMany({
@@ -24,7 +21,7 @@ export class UserService {
         username: true,
         password: false,
         created_at: true,
-        refresh_token: true,
+        refresh_token: false,
       },
       where: {
         id: {

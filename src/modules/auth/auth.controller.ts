@@ -36,13 +36,13 @@ export class AuthController {
     const result = await this.authSvc.getUserByUsername(user.username);
 
     if(result == undefined)
-      throw new HttpException(`${user.username} no existe`, HttpStatus.UNAUTHORIZED)
+      throw new HttpException('Credenciales incorrectas', HttpStatus.UNAUTHORIZED)
 
     const passwordDB = result.password || "";
     const validate_pass = await this.utilSvc.checkPassword(user.password, passwordDB);
 
     if(!validate_pass)
-      throw new HttpException("Credenciales incorrectas", HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Credenciales incorrectas', HttpStatus.UNAUTHORIZED);
 
     const payload: any = { 
       id: result.id,
@@ -52,8 +52,7 @@ export class AuthController {
     }
     var refreshToken = await this.utilSvc.generateJWT(payload, '7d');
     const hash = await this.utilSvc.hash(refreshToken);
-    await this.authSvc.updateHash(result.id,hash)
-    await this.authSvc.saveRefreshToken(result.id, refreshToken);
+    await this.authSvc.updateHash(result.id, hash)
 
     payload.hash = hash;
     refreshToken = hash;
@@ -71,8 +70,8 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Extrae el ID del usuario desde el token y busca la información" })
   public getProfile(@Req() request: any) {
-    const user = request['user'];
-    return user
+    const { hash, iat, exp, ...profile } = request['user'];
+    return profile
   }
 
   @Post('refresh-token')
@@ -83,23 +82,38 @@ export class AuthController {
     const userSession = request['user'];
     const user = await this.authSvc.getUserById(userSession.id)
     if(!user || !user.hash) throw new AppException('Acceso Denegado',HttpStatus.FORBIDDEN, '0')
-    // Comparar el token recibido con el token guardado
-    if(userSession.hash != user.hash) throw new AppException('Token inválido', HttpStatus.FORBIDDEN, '0')
+    // Comparar el token recibido con el token guardado (comparación constante en tiempo)
+    const isValidHash = await this.utilSvc.checkPassword(userSession.hash, user.hash);
+    if(!isValidHash) throw new AppException('Token inválido', HttpStatus.FORBIDDEN, '0')
 
     // Si el token es válido se generan nuevos tokens
-    // hacer esto con ayuda de utils
+    const payload: any = {
+      id: user.id,
+      name: user.name,
+      lastname: user.lastname,
+      created_date: user.created_at,
+    };
+
+    // Generar nuevo refresh token (7 días)
+    let refreshToken = await this.utilSvc.generateJWT(payload, '7d');
+    const hash = await this.utilSvc.hash(refreshToken);
+    await this.authSvc.updateHash(user.id, hash);
+
+    // Generar nuevo access token (1 hora) con el hash en el payload
+    payload.hash = hash;
+    const accessToken = await this.utilSvc.generateJWT(payload, '1h');
+
     return {
-      access_token: '',
-      refresh_token: ''
+      accessToken,
+      refreshToken: hash
     }
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  public async logout(@Req() request: any) {
+  public async logout(@Req() request: any): Promise<void> {
     const session = request['user'];
-    const user = await this.authSvc.updateHash(session.id, null);
-    return user;
+    await this.authSvc.updateHash(session.id, null);
   }
 }

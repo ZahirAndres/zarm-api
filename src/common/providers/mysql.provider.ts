@@ -3,11 +3,11 @@ export const mysqlProvider = [{
     useFactory: async () => {
         const mysql = require('mysql2/promise');
         const connection = await mysql.createConnection({
-            host: 'localhost',
-            port: '3306',
-            user: 'admin',
-            password: 'admin123',
-            database: 'bgma_db',
+            host: process.env.MYSQL_HOST || 'localhost',
+            port: process.env.MYSQL_PORT || '3306',
+            user: process.env.MYSQL_USER || 'admin',
+            password: process.env.MYSQL_PASSWORD,
+            database: process.env.MYSQL_DATABASE || 'bgma_db',
         })
         return connection;
     }

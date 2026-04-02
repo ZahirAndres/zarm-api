@@ -41,5 +41,5 @@ model Task {
   created_at DateTime @default(now())
   priority    Boolean
   user_id     Int
-  user        User    @relation(fields: [user_id], references: [id])
+  user        User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

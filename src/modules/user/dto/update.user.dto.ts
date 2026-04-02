@@ -1,9 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { 
-    IsBoolean,
-    IsInt,
-    IsNotEmpty,
-    IsNumber,
     IsOptional,
     IsString,
     MaxLength,
@@ -35,9 +31,9 @@ export class UpdateUserDto {
     
         @IsString({ message: "La contraseña debe ser un texto"})
         @IsOptional()
-        @MinLength(3,{ message: "La contraseña debe tener al menos 3 caracteres"})
-        @MaxLength(10,{ message: "La contraseña no debe exceder los 10 caracteres"})
-        @ApiProperty({ description: 'password', example: 'Linux2024!'})
+        @MinLength(8,{ message: "La contraseña debe tener al menos 8 caracteres"})
+        @MaxLength(100,{ message: "La contraseña no debe exceder los 100 caracteres"})
+        @ApiProperty({ description: 'password', example: 'MiPassword123!'})
         password: string;
 
 }
