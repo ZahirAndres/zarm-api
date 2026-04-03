@@ -6,12 +6,7 @@ import { NavbarComponent } from '../../shared/components/navbar/navbar.component
   selector: 'app-dashboard-layout',
   standalone: true,
   imports: [RouterOutlet, NavbarComponent],
-  template: `
-    <app-navbar [userRole]="null" [userName]="''" />
-    <main class="dashboard-main">
-      <router-outlet />
-    </main>
-  `,
+  templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.css'
 })
 export class DashboardLayoutComponent {}

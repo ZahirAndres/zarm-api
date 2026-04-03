@@ -1,0 +1,98 @@
+<div class="modal-backdrop fade-in" (click)="onClose()"></div>
+<!-- Contenedor general del Modal central -->
+<div class="modal-container scale-in">
+  
+  <!-- Botón cerrar X - Cambiar a icon -->
+  <button class="close-btn" (click)="onClose()">✕</button> 
+
+  <!-- Pestañas Superiores -->
+  <div class="modal-tabs">
+    <button class="tab-btn" [class.active]="activeMode === 'login'" (click)="toggleMode('login')">
+      Iniciar Sesión
+    </button>
+    <button class="tab-btn" [class.active]="activeMode === 'register'" (click)="toggleMode('register')">
+      Crear Cuenta
+    </button>
+    <!-- Línea indicadora naranja -->
+    <div class="tab-indicator" [class.slide-right]="activeMode === 'register'"></div>
+  </div>
+
+  <div class="slider-wrapper">
+    <div class="slider-track" [style.transform]="activeMode === 'login' ? 'translateX(0)' : 'translateX(-50%)'">
+      
+      <!-- Lado Izquierdo: LOGIN -->
+      <div class="slider-panel">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+          <div class="text-center mb-lg">
+            <h2 class="form-title">Bienvenido de vuelta</h2>
+            <p class="text-muted text-sm mt-xs">Accede para gestionar tu equipo</p>
+          </div>
+
+          @if (loginError) {
+            <div class="alert-box">{{ loginError }}</div>
+          }
+
+          <div class="form-group mb-md">
+            <label class="custom-label">Usuario</label>
+            <input type="text" formControlName="username" class="custom-input" placeholder="Tu usuario único" />
+            @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+              <span class="form-error">Debes ingresar el usuario</span>
+            }
+          </div>
+
+          <div class="form-group mb-xl">
+            <label class="custom-label">Contraseña</label>
+            <input type="password" formControlName="password" class="custom-input" />
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+              <span class="form-error">Debes ingresar la contraseña</span>
+            }
+          </div>
+
+          <button type="submit" [disabled]="loginForm.invalid || isLoading" class="btn btn-primary btn-full btn-lg">
+            @if(isLoading) { <span class="spinner"></span> } @else { Entrar }
+          </button>
+        </form>
+      </div>
+
+      <!-- Lado Derecho: REGISTER -->
+      <div class="slider-panel">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+          <div class="text-center mb-md">
+            <h2 class="form-title">Nueva cuenta</h2>
+            <p class="text-muted text-sm mt-xs">Comienza tu gestión aquí</p>
+          </div>
+
+          @if (registerError) {
+            <div class="alert-box">{{ registerError }}</div>
+          }
+
+          <div class="form-grid mb-sm">
+            <div class="form-group">
+              <label class="custom-label">Nombre</label>
+              <input type="text" formControlName="name" class="custom-input" placeholder="Ej. Zahir" />
+            </div>
+            <div class="form-group">
+              <label class="custom-label">Apellido</label>
+              <input type="text" formControlName="lastname" class="custom-input" placeholder="Ej. Mora" />
+            </div>
+          </div>
+
+          <div class="form-group mb-sm">
+            <label class="custom-label">Usuario</label>
+            <input type="text" formControlName="username" class="custom-input" placeholder="Ej. Apodo" />
+          </div>
+
+          <div class="form-group mb-lg">
+            <label class="custom-label">Contraseña</label>
+            <input type="password" formControlName="password" class="custom-input" placeholder="Mínimo 8 caracteres" />
+          </div>
+
+          <button type="submit" [disabled]="registerForm.invalid || isLoading" class="btn btn-primary btn-full btn-lg">
+            @if(isLoading) { <span class="spinner"></span> } @else { Registrar nuevo miembro }
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

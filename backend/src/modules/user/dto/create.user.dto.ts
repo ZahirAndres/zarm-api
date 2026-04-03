@@ -7,9 +7,7 @@ import {
 } from "class-validator";
 
 export class CreateUserDto {
-
-    id?: number;
-
+  // id property was removed to prevent ValidationPipe errors with forbidNonWhitelisted
     @IsString({ message: "El nombre debe ser un texto"})
     @IsNotEmpty()
     @MinLength(3, {message: "El nombre debe tener al menos los 3 caracteres"})

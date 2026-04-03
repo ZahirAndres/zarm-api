@@ -18,7 +18,7 @@ export class AllExceptionFilter implements ExceptionFilter {
             const res = exception.getResponse();
             message = typeof res === 'string' ? res : (res as any).message || res;
         } else {
-            message = 'Error interno del servidor';
+            message = exception.message || 'Error interno del servidor';
         }
 
         response.status(status).json({

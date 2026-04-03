@@ -19,9 +19,7 @@ export class UserService {
         name: true,
         lastname: true,
         username: true,
-        password: false,
         created_at: true,
-        refresh_token: false,
       },
       where: {
         id: {
@@ -40,7 +38,6 @@ export class UserService {
         name: true,
         lastname: true,
         username: true,
-        password: false,
         created_at: true,
       }
 
@@ -56,7 +53,6 @@ export class UserService {
         name: true,
         lastname: true,
         username: true,
-        password: false,
         created_at: true,
       }
 
@@ -65,10 +61,9 @@ export class UserService {
   }
 
   async insertUser(user: CreateUserDto): Promise<User> {
-    const { id, ...userData } = user;
     const newUser = await this.prisma.user.create({
       data: {
-        ...userData,
+        ...user,
         hash: ''
       },
       select: {
@@ -76,7 +71,6 @@ export class UserService {
         name: true,
         lastname: true,
         username: true,
-        password: false,
         created_at: true,
       }
     });
@@ -92,7 +86,6 @@ export class UserService {
         name: true,
         lastname: true,
         username: true,
-        password: false,
         created_at: true,
       }
     });

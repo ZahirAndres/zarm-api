@@ -4,23 +4,21 @@
     
     <!-- Texto a la izquierda -->
     <div class="hero-content fade-in-left">
-      <div class="hero-badge">V 1.0 — Beta Release</div>
-      
       <h1 class="home-title">
         Domina la cancha con <br />
         <span class="gradient-text">CoachZone</span>
       </h1>
       
       <p class="home-sub text-muted">
-        La plataforma definitiva para entrenadores y jugadores. Crea rutinas estructuradas, analiza estadísticas y mantén la comunicación fluida con todo tu equipo en un solo lugar.
+        La plataforma definitiva para entrenadores y jugadores. Crea rutinas estructuradas y mantén la comunicación fluida con todo tu equipo en un solo lugar.
       </p>
       
       <div class="home-actions">
-        <a routerLink="/login" class="btn btn-primary btn-lg shine-effect">
+        <button (click)="openModal('register')" class="btn btn-primary btn-lg shine-effect">
           <span>Comenzar ahora</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-        </a>
-        <a routerLink="/register" class="btn btn-ghost btn-lg">Explorar plataforma</a>
+        </button>
+        <button (click)="openModal('login')" class="btn btn-ghost btn-lg">Acceder a mi cuenta</button>
       </div>
     </div>
 
@@ -30,43 +28,12 @@
         <span class="home-ball">🏀</span>
         <div class="glow"></div>
       </div>
-      <div class="floating-stat stat-1 slide-up delay-200">
-        🏃‍♂️ Entrenamiento: <span class="text-success">+15%</span>
-      </div>
-      <div class="floating-stat stat-2 slide-up delay-300">
-        🎯 Puntería: <span class="text-primary">82%</span>
-      </div>
+
     </div>
 
   </div> <!-- Fin Split -->
-
-  <!-- Tarjetas debajo con ancho completo -->
-  <div class="home-cards fade-in-up delay-500">
-    <div class="card feature-card">
-      <div class="feature-icon-wrapper">
-        <span class="feature-icon">📋</span>
-        <div class="icon-ring"></div>
-      </div>
-      <h3>Gestión Estratégica</h3>
-      <p class="text-muted text-sm">Crea y asigna ejercicios personalizados orientados al rendimiento real de cada miembro.</p>
-    </div>
-    
-    <div class="card feature-card">
-      <div class="feature-icon-wrapper">
-        <span class="feature-icon">👥</span>
-        <div class="icon-ring"></div>
-      </div>
-      <h3>Control de Plantilla</h3>
-      <p class="text-muted text-sm">Administración centralizada con roles dinámicos para entrenadores y jugadores.</p>
-    </div>
-    
-    <div class="card feature-card">
-      <div class="feature-icon-wrapper">
-        <span class="feature-icon">📈</span>
-        <div class="icon-ring"></div>
-      </div>
-      <h3>Métricas Precisas</h3>
-      <p class="text-muted text-sm">Monitorea el progreso con paneles visuales e inteligentes en tiempo real.</p>
-    </div>
-  </div>
 </div>
+
+@if (showAuthModal) {
+  <app-auth-modal [initialMode]="authMode" (close)="closeModal()"></app-auth-modal>
+}
