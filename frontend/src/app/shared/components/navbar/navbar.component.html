@@ -1,0 +1,41 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+    <span class="navbar-logo">🏀</span>
+    <span class="navbar-title">CoachZone</span>
+  </div>
+
+  <div class="navbar-links" [class.open]="menuOpen">
+    <a routerLink="/dashboard" routerLinkActive="active">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a routerLink="/tasks" routerLinkActive="active">
+      <span class="nav-icon">📋</span> Ejercicios
+    </a>
+    @if (userRole === 'Entrenador') {
+      <a routerLink="/players" routerLinkActive="active">
+        <span class="nav-icon">👥</span> Jugadores
+      </a>
+    }
+
+     <a routerLink="/stats" routerLinkActive="active">
+        <span class="nav-icon">🧮</span> Estadíticas
+      </a>
+  </div>
+
+  <div class="navbar-user">
+    @if (userName) {
+      <div class="user-info">
+        <div class="user-avatar">{{ userName.charAt(0).toUpperCase() }}</div>
+        <div class="user-details">
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-role badge" [class]="userRole === 'Entrenador' ? 'badge-coach' : 'badge-player'">
+            {{ userRole }}
+          </span>
+        </div>
+      </div>
+    }
+    <button class="btn btn-ghost btn-sm" (click)="toggleMenu()" aria-label="Menu">
+      ☰
+    </button>
+  </div>
+</nav>
