@@ -1,0 +1,51 @@
+<div class="tasks-container fade-in">
+  <div class="tasks-header">
+    <div>
+      <h1 class="page-title">📋 Ejercicios de Entrenamiento</h1>
+      <p class="text-muted mt-xs">Gestiona y asigna rutinas para los jugadores del equipo.</p>
+    </div>
+    
+    <div class="tasks-actions">
+      <!-- Filtro (Placeholder) -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="custom-input" placeholder="Buscar ejercicio..." />
+      </div>
+      
+      <!-- Botón solo para Entrenador (Lógica posterior) -->
+      <button class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Nuevo Ejercicio
+      </button>
+    </div>
+  </div>
+
+  <div class="tasks-grid mt-xl">
+    @for (item of ejerciciosDemo; track item.id) {
+      <div class="card task-card fade-in-up" [style.animation-delay]="$index * 100 + 'ms'">
+        
+        <div class="task-status-bar" [class.priority]="item.prioridad"></div>
+        
+        <div class="task-body">
+          <div class="task-top">
+            <h3 class="task-name">{{ item.nombre }}</h3>
+            <span class="badge" [class]="item.prioridad ? 'badge-danger' : 'badge-success'">
+              {{ item.prioridad ? '🔴 Prioridad' : '🟢 Estándar' }}
+            </span>
+          </div>
+          
+          <p class="text-muted text-sm task-desc">{{ item.descripcion }}</p>
+        </div>
+        
+        <div class="task-footer">
+          <div class="assignee">
+            <div class="assignee-avatar">JD</div>
+            <span class="text-xs text-muted font-semibold">Jugador</span>
+          </div>
+          <button class="btn btn-ghost btn-sm task-btn">Ver Detalle</button>
+        </div>
+
+      </div>
+    }
+  </div>
+</div>

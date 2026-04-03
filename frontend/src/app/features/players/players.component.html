@@ -1,0 +1,43 @@
+<div class="players-container fade-in">
+  <div class="players-header">
+    <div>
+      <h1 class="page-title">👥 Usuarios del Sistema</h1>
+      <p class="text-muted mt-xs">Administración de usuarios y asignación de roles.</p>
+    </div>
+    
+    <div class="players-actions">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="custom-input" placeholder="Buscar usuario..." />
+      </div>
+    </div>
+  </div>
+
+  <div class="players-grid mt-xl">
+    @for (user of usuariosDemo; track user.id) {
+      <div class="card player-card fade-in-up" [style.animation-delay]="$index * 100 + 'ms'">
+        
+        <div class="player-avatar">
+          <div class="avatar-circle">
+            {{ user.username.charAt(0).toUpperCase() }}
+          </div>
+          <span class="status-indicator online"></span>
+        </div>
+        
+        <div class="player-info">
+          <h3 class="player-name">{{ user.username }}</h3>
+          <span class="text-muted text-sm" style="display:block; margin-bottom:8px;">{{ user.email }}</span>
+          
+          <span class="badge" [class]="user.rol === 'Entrenador' ? 'badge-coach' : 'badge-player'">
+            {{ user.rol }}
+          </span>
+        </div>
+        
+        <div class="player-actions mt-md" style="width:100%; border-top:1px dashed var(--color-border); padding-top:var(--space-md);">
+          <button class="btn btn-ghost btn-sm btn-full view-btn">Ver Tareas</button>
+        </div>
+
+      </div>
+    }
+  </div>
+</div>
