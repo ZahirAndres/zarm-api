@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { publicGuard } from './core/guards/public.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
 
@@ -31,6 +32,8 @@ export const routes: Routes = [
       },
       {
         path: 'users',
+        canActivate: [roleGuard],
+        data: { expectedRoleId: 1, expectedRoleName: 'Entrenador' },
         loadComponent: () =>
           import('./features/players/players.component').then(m => m.PlayersComponent)
       },

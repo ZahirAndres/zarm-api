@@ -48,6 +48,7 @@ export class AuthController {
       id: result.id,
       name: result.name,
       lastname: result.lastname,
+      rol_id: result.rol_id,
       created_date: result.created_at,
     }
     var refreshToken = await this.utilSvc.generateJWT(payload, '7d');

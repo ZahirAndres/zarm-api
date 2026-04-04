@@ -6,46 +6,79 @@
     </div>
     
     <div class="tasks-actions">
-      <!-- Filtro (Placeholder) -->
       <div class="search-box">
         <span class="search-icon">🔍</span>
         <input type="text" class="custom-input" placeholder="Buscar ejercicio..." />
       </div>
       
-      <!-- Botón solo para Entrenador (Lógica posterior) -->
-      <button class="btn btn-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        Nuevo ejercicio
-      </button>
+      @if (authService.currentUser$ | async; as user) {
+        @if (user.role === 'Entrenador' || user.rol_id === 1) {
+          <button class="btn btn-primary" (click)="openModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Nuevo ejercicio
+          </button>
+        }
+      }
     </div>
   </div>
 
-  <div class="tasks-grid mt-xl">
-    @for (item of ejerciciosDemo; track item.id) {
-      <div class="card task-card fade-in-up" [style.animation-delay]="$index * 100 + 'ms'">
-        
-        <div class="task-status-bar" [class.priority]="item.prioridad"></div>
-        
-        <div class="task-body">
-          <div class="task-top">
-            <h3 class="task-name">{{ item.nombre }}</h3>
-            <span class="badge" [class]="item.prioridad ? 'badge-danger' : 'badge-success'">
-              {{ item.prioridad ? 'Prioridad' : 'Estándar' }}
-            </span>
+  @if (isLoading()) {
+    <div class="mt-xl" style="text-align: center; padding: 3rem;">
+      <p class="text-muted">Cargando ejercicios... ⏳</p>
+    </div>
+  } @else {
+    
+    <div class="tasks-grid mt-xl">
+      @for (item of tasks(); track item.id) {
+        <div class="card task-card fade-in-up" [style.animation-delay]="$index * 50 + 'ms'">
+          
+          <div class="task-status-bar" [class.priority]="item.priority"></div>
+          
+          <div class="task-body">
+            <div class="task-top">
+              <h3 class="task-name">{{ item.name }}</h3>
+              <span class="badge" [class]="item.priority ? 'badge-danger' : 'badge-success'">
+                {{ item.priority ? 'Alta Prioridad' : 'Estándar' }}
+              </span>
+            </div>
+            
+            <p class="text-muted text-sm task-desc">{{ item.description }}</p>
           </div>
           
-          <p class="text-muted text-sm task-desc">{{ item.descripcion }}</p>
-        </div>
-        
-        <div class="task-footer">
-          <div class="assignee">
-            <div class="assignee-avatar">JD</div>
-            <span class="text-xs text-muted font-semibold">Jugador</span>
+          <div class="task-footer">
+            <div class="assignee" style="display: flex; flex-direction: column; gap: 2px;">
+              <span class="text-xs font-semibold">Jugador ID: {{ item.user_id }}</span>
+              <span class="text-xs text-muted">Creado: {{ item.created_at | date:'dd/MM/yyyy' }}</span>
+            </div>
+            
+            <div style="display: flex; gap: 8px;">
+              @if ((authService.currentUser$ | async)?.rol_id === 1) {
+                <button 
+                  class="btn btn-ghost btn-sm" 
+                  style="color: var(--color-error, #ef4444); padding: 4px 8px;"
+                  title="Eliminar ejercicio"
+                  (click)="deleteTask(item.id)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+              }
+            </div>
           </div>
-          <button class="btn btn-ghost btn-sm task-btn">Ver detalle</button>
-        </div>
 
-      </div>
-    }
-  </div>
+        </div>
+      } @empty {
+        <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+          <span style="font-size: 3rem;">📋</span>
+          <h3 class="mt-md">Sin ejercicios</h3>
+          <p class="text-muted">Aún no se han asignado ejercicios al equipo.</p>
+        </div>
+      }
+    </div>
+  }
 </div>
+
+@if (isModalOpen()) {
+  <app-task-modal 
+    (close)="closeModal()" 
+    (taskCreated)="loadTasks()">
+  </app-task-modal>
+}

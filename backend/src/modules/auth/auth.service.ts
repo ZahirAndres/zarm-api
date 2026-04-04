@@ -19,6 +19,7 @@ export class AuthService {
         username: false,
         password: true,
         created_at: true,
+        rol_id: true
       }
     })
     return result;

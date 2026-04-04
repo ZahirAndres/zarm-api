@@ -10,7 +10,6 @@ export class PlayersService {
   private apiUrl = `${environment.apiUrl}/api/user`;
 
   getUsers() {
-    // Retorna todos los usuarios de la BD (Roles mezclados según los envíe Nest)
     return this.http.get<any[]>(this.apiUrl);
   }
 

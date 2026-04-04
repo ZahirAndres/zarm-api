@@ -90,3 +90,59 @@
   font-weight: 600;
   line-height: 1;
 }
+
+/* --- Botón del Menú Móvil --- */
+.menu-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text, white);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* --- Responsive (Móviles) --- */
+@media (max-width: 768px) {
+  /* Ocultar los enlaces por defecto en móvil */
+  .navbar-links {
+    position: absolute;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    background: rgba(15,15,15,.95);
+    backdrop-filter: blur(12px);
+    flex-direction: column;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
+    
+    /* Animación de apertura */
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition);
+  }
+
+  /* Mostrar los enlaces cuando isMenuOpen es true (clase .open) */
+  .navbar-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .navbar-links a {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+  }
+}
+
+/* --- Responsive (Escritorio) --- */
+@media (min-width: 769px) {
+  /* Ocultar SOLO el botón de menú hamburguesa en escritorio */
+  .menu-toggle-btn {
+    display: none;
+  }
+}

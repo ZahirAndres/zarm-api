@@ -63,8 +63,8 @@ export class AuthModalComponent implements OnInit {
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         if (res.accessToken) {
-          localStorage.setItem('access_token', res.accessToken);
           this.router.navigate(['/dashboard']);
+          this.onClose();
         }
         this.isLoading = false;
       },

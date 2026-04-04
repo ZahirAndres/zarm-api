@@ -3,7 +3,8 @@
     <span class="navbar-logo">🏀</span>
     <span class="navbar-title">CoachZone</span>
   </div>
-<!-- colocar iconos -->
+
+  @if (authService.currentUser$ | async; as user) {
   <div class="navbar-links" [class.open]="menuOpen">
     <a routerLink="/dashboard" routerLinkActive="active">
       <span class="nav-icon">📊</span> Dashboard
@@ -11,27 +12,42 @@
     <a routerLink="/tasks" routerLinkActive="active">
       <span class="nav-icon">📋</span> Ejercicios
     </a>
-    @if (userRole === 'Entrenador') {
-      <a routerLink="/users" routerLinkActive="active">
-        <span class="nav-icon">👥</span> Usuarios
-      </a>
+
+    @if (user.role === 'Entrenador' || user.rol_id === 1) {
+    <a routerLink="/users" routerLinkActive="active">
+      <span class="nav-icon">👥</span> Usuarios
+    </a>
     }
   </div>
 
   <div class="navbar-user">
-    @if (userName) {
-      <div class="user-info">
-        <div class="user-avatar">{{ userName.charAt(0).toUpperCase() }}</div>
-        <div class="user-details">
-          <span class="user-name">{{ userName }}</span>
-          <span class="user-role badge" [class]="userRole === 'Entrenador' ? 'badge-coach' : 'badge-player'">
-            {{ userRole }}
-          </span>
-        </div>
+    <div class="user-info">
+      <div class="user-avatar">
+        {{ (user.username || user.name || 'U').charAt(0).toUpperCase() }}
       </div>
-    }
-    <button class="btn btn-ghost btn-sm" (click)="toggleMenu()" aria-label="Menu">
+      <div class="user-details">
+        <span class="user-name">{{ user.username || user.name || 'Usuario' }}</span>
+        <span class="user-role badge" [class]="user.rol_id === 1 ? 'badge-coach' : 'badge-player'">
+          {{ user.rol_id === 1 ? 'Entrenador' : 'Jugador' }}
+        </span>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost btn-sm" (click)="authService.logout()">Salir</button>
+
+    <button class="menu-toggle-btn" (click)="toggleMenu()" aria-label="Menu">
       ☰
     </button>
   </div>
+
+  } @else {
+  <div class="navbar-user">
+    <button class="btn btn-primary" (click)="openAuthModal()">Iniciar Sesión</button>
+  </div>
+  }
 </nav>
+
+@if (isAuthModalOpen) {
+<app-auth-modal [initialMode]="'login'" (close)="closeAuthModal()">
+</app-auth-modal>
+}
