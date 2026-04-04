@@ -1,0 +1,23 @@
+<div class="modal-overlay" (click)="close.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="close.emit()">✕</button>
+    <h2>Editar Usuario</h2>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="mt-md">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" formControlName="name" class="custom-input">
+      </div>
+      <div class="form-group mt-sm">
+        <label>Apellido</label>
+        <input type="text" formControlName="lastname" class="custom-input">
+      </div>
+      <div class="form-group mt-sm">
+        <label>Usuario</label>
+        <input type="text" formControlName="username" class="custom-input">
+      </div>
+      <button type="submit" class="btn btn-primary mt-md w-100" [disabled]="userForm.invalid">
+        Guardar Cambios
+      </button>
+    </form>
+  </div>
+</div>

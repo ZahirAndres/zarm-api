@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, Input, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Task, TasksService } from '../../../core/services/tasks.service';
+import { PlayersService, User } from '../../../core/services/players.service'; 
 
 @Component({
   selector: 'app-task-modal',
@@ -16,6 +17,7 @@ export class TaskModalComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private tasksService = inject(TasksService);
+  private playersService = inject(PlayersService); 
 
   taskForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -24,17 +26,21 @@ export class TaskModalComponent implements OnInit {
     user_id: [null, Validators.required]
   });
 
-  // ¡AQUÍ ESTÁN LAS VARIABLES QUE FALTABAN!
   isLoading = false;
   errorMsg = '';
-  // Jugadores de prueba (Luego los traeremos de la BD)
-  players = [
-    { id: 2, username: 'Jugador 1' },
-    { id: 3, username: 'Jugador 2' }
-  ];
+  players: User[] = [];
 
   ngOnInit() {
-    // Si recibimos datos, llenamos el formulario para editar
+    this.playersService.getUsers().subscribe({
+      next: (users) => {
+        this.players = users.filter(u => u.rol_id === 2);
+      },
+      error: (err) => {
+        console.error('Error al cargar la lista de jugadores', err);
+        this.errorMsg = 'No se pudieron cargar los jugadores.';
+      }
+    });
+
     if (this.taskToEdit) {
       this.taskForm.patchValue({
         name: this.taskToEdit.name,
@@ -45,7 +51,6 @@ export class TaskModalComponent implements OnInit {
     }
   }
 
-  // ¡FUNCIÓN PARA CERRAR!
   onClose() {
     this.close.emit();
   }
@@ -65,7 +70,6 @@ export class TaskModalComponent implements OnInit {
     };
 
     if (this.taskToEdit) {
-      // MODO EDICIÓN
       this.tasksService.updateTask(this.taskToEdit.id, taskData).subscribe({
         next: () => {
           this.isLoading = false;
@@ -79,7 +83,6 @@ export class TaskModalComponent implements OnInit {
         }
       });
     } else {
-      // MODO CREACIÓN
       this.tasksService.createTask(taskData).subscribe({
         next: () => {
           this.isLoading = false;

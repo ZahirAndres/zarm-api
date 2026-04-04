@@ -27,4 +27,12 @@ export class PlayersService {
   updateUserRole(id: number, rol_id: number) {
     return this.http.patch<User>(`${this.apiUrl}/${id}`, { rol_id });
   }
+
+  updateUser(id: number, userData: Partial<User>) {
+    return this.http.patch<User>(`${this.apiUrl}/${id}`, userData);
+  }
+
+  deleteUser(id: number) {
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
+  }
 }

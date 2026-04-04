@@ -21,7 +21,14 @@
   </div>
 
   <div class="navbar-user">
-    <div class="user-info">
+    
+    <div class="user-info" 
+         (click)="openProfileModal(user)" 
+         style="cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: background 0.2s;"
+         onmouseover="this.style.background='var(--color-surface)'" 
+         onmouseout="this.style.background='transparent'"
+         title="Editar mi perfil">
+      
       <div class="user-avatar">
         {{ (user.username || user.name || 'U').charAt(0).toUpperCase() }}
       </div>
@@ -32,7 +39,6 @@
         </span>
       </div>
     </div>
-
     <button class="btn btn-ghost btn-sm" (click)="authService.logout()">Salir</button>
 
     <button class="menu-toggle-btn" (click)="toggleMenu()" aria-label="Menu">
@@ -50,4 +56,12 @@
 @if (isAuthModalOpen) {
 <app-auth-modal [initialMode]="'login'" (close)="closeAuthModal()">
 </app-auth-modal>
+}
+
+@if (isProfileModalOpen()) {
+  <app-user-modal 
+    [userToEdit]="currentUserData()" 
+    (close)="closeProfileModal()" 
+    (userSaved)="onProfileSaved()">
+  </app-user-modal>
 }

@@ -82,7 +82,6 @@ export class TasksComponent implements OnInit {
     if (confirm('¿Eliminar ejercicio?')) {
       this.tasksService.deleteTask(id).subscribe({
         next: () => {
-          // ACTUALIZACIÓN REACTIVA: Filtramos el signal directamente
           this.tasks.update(prevTasks => prevTasks.filter(t => t.id !== id));
         }
       });

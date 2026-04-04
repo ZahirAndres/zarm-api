@@ -27,7 +27,7 @@
         <select formControlName="user_id" class="custom-input">
           <option [ngValue]="null" disabled>Selecciona un jugador...</option>
           @for (player of players; track player.id) {
-            <option [value]="player.id">{{ player.username }}</option>
+            <option [value]="player.id">{{ player.name }} {{ player.lastname }} ({{ player.username }})</option>
           }
         </select>
         @if (taskForm.get('user_id')?.invalid && taskForm.get('user_id')?.touched) {
