@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common'; // Agregamos DatePipe
 import { TasksService, Task } from '../../core/services/tasks.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -20,6 +20,18 @@ export class TasksComponent implements OnInit {
   isLoading = signal<boolean>(true);
   isModalOpen = signal<boolean>(false);
   selectedTask = signal<Task | null>(null);
+  searchQuery = signal<string>(''); 
+  viewMode = signal<'grid' | 'table'>('grid');
+
+  filteredTasks = computed(() => {
+    const query = this.searchQuery().toLowerCase();
+    if (!query) return this.tasks(); 
+    
+    return this.tasks().filter(task => 
+      task.name?.toLowerCase().includes(query) ||
+      task.description?.toLowerCase().includes(query)
+    );
+  });
 
   ngOnInit() {
     this.loadTasks();
@@ -39,13 +51,22 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  // Modificamos para abrir en modo creación
+  updateSearch(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(input.value);
+  }
+
+  setViewMode(mode: 'grid' | 'table') {
+    this.viewMode.set(mode);
+  }
+
+  // abrir en modo creación
   openCreateModal() {
     this.selectedTask.set(null); 
     this.isModalOpen.set(true);
   }
 
-  // Nuevo método para abrir en modo edición
+  //abrir en modo edición
   openEditModal(task: Task) {
     this.selectedTask.set(task);
     this.isModalOpen.set(true);

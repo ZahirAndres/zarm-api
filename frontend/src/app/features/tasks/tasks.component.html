@@ -5,10 +5,34 @@
       <p class="text-muted mt-xs">Gestiona y asigna rutinas para los jugadores del equipo.</p>
     </div>
     
-    <div class="tasks-actions">
+    <div class="tasks-actions" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" class="custom-input" placeholder="Buscar ejercicio..." />
+        <input 
+          type="text" 
+          class="custom-input" 
+          placeholder="Buscar ejercicio..." 
+          (input)="updateSearch($event)" />
+      </div>
+
+      <div class="view-toggles" style="display: flex; background: var(--color-background); border-radius: 8px; padding: 4px; border: 1px solid var(--color-border);">
+        <button 
+          class="btn btn-ghost btn-sm" 
+          [class.btn-primary]="viewMode() === 'grid'"
+          [style.background]="viewMode() === 'grid' ? 'var(--color-primary)' : 'transparent'"
+          [style.color]="viewMode() === 'grid' ? 'white' : 'var(--color-text)'"
+          (click)="setViewMode('grid')" title="Vista de Tarjetas">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </button>
+        <button 
+          class="btn btn-ghost btn-sm" 
+          [class.btn-primary]="viewMode() === 'table'"
+          [style.background]="viewMode() === 'table' ? 'var(--color-primary)' : 'transparent'"
+          [style.color]="viewMode() === 'table' ? 'white' : 'var(--color-text)'"
+          (click)="setViewMode('table')" title="Vista de Tabla">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        </button>
       </div>
       
       @if (authService.currentUser$ | async; as user) {
@@ -28,49 +52,103 @@
     </div>
   } @else {
     
-    <div class="tasks-grid mt-xl">
-      @for (item of tasks(); track item.id) {
-        <div class="card task-card fade-in-up" [style.animation-delay]="$index * 50 + 'ms'">
-          
-          <div class="task-status-bar" [class.priority]="item.priority"></div>
-          
-          <div class="task-body">
-            <div class="task-top">
-              <h3 class="task-name">{{ item.name }}</h3>
-              <span class="badge" [class]="item.priority ? 'badge-danger' : 'badge-success'">
-                {{ item.priority ? 'Alta Prioridad' : 'Estándar' }}
-              </span>
-            </div>
-            <p class="text-muted text-sm task-desc">{{ item.description }}</p>
-          </div>
-          
-          <div class="task-footer">
-            <div class="assignee" style="display: flex; flex-direction: column; gap: 2px;">
-              <span class="text-xs font-semibold">Jugador ID: {{ item.user_id }}</span>
-              <span class="text-xs text-muted">Creado: {{ item.created_at | date:'dd/MM/yyyy' }}</span>
+    @if (viewMode() === 'grid') {
+      
+      <div class="tasks-grid mt-xl">
+        @for (item of filteredTasks(); track item.id) {
+          <div class="card task-card fade-in-up" [style.animation-delay]="$index * 50 + 'ms'">
+            <div class="task-status-bar" [class.priority]="item.priority"></div>
+            
+            <div class="task-body">
+              <div class="task-top">
+                <h3 class="task-name">{{ item.name }}</h3>
+                <span class="badge" [class]="item.priority ? 'badge-danger' : 'badge-success'">
+                  {{ item.priority ? 'Alta Prioridad' : 'Estándar' }}
+                </span>
+              </div>
+              <p class="text-muted text-sm task-desc">{{ item.description }}</p>
             </div>
             
-            <div style="display: flex; gap: 8px;">
-              @if ((authService.currentUser$ | async)?.rol_id === 1) {
-                <button class="btn btn-ghost btn-sm" (click)="openEditModal(item)" title="Editar">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                </button>
-                
-                <button class="btn btn-ghost btn-sm" style="color: var(--color-error, #ef4444); padding: 4px 8px;" title="Eliminar" (click)="deleteTask(item.id)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                </button>
-              }
+            <div class="task-footer">
+              <div class="assignee" style="display: flex; flex-direction: column; gap: 2px;">
+                <span class="text-xs font-semibold">Jugador ID: {{ item.user_id }}</span>
+                <span class="text-xs text-muted">Creado: {{ item.created_at | date:'dd/MM/yyyy' }}</span>
+              </div>
+              
+              <div style="display: flex; gap: 8px;">
+                @if ((authService.currentUser$ | async)?.rol_id === 1) {
+                  <button class="btn btn-ghost btn-sm" (click)="openEditModal(item)" title="Editar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  </button>
+                  <button class="btn btn-ghost btn-sm" style="color: var(--color-error, #ef4444); padding: 4px 8px;" title="Eliminar" (click)="deleteTask(item.id)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                  </button>
+                }
+              </div>
             </div>
           </div>
-        </div>
-      } @empty {
-        <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-          <span style="font-size: 3rem;">📋</span>
-          <h3 class="mt-md">Sin ejercicios</h3>
-          <p class="text-muted">Aún no se han asignado ejercicios al equipo.</p>
-        </div>
-      }
-    </div>
+        } @empty {
+          <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+            <span style="font-size: 3rem;">📋</span>
+            <h3 class="mt-md">Sin resultados</h3>
+            <p class="text-muted">No se encontraron ejercicios con esa búsqueda.</p>
+          </div>
+        }
+      </div>
+
+    } @else {
+      
+      <div class="table-container mt-xl fade-in-up" style="background: var(--color-surface); border-radius: 12px; border: 1px solid var(--color-border); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead style="background: var(--color-background); border-bottom: 1px solid var(--color-border);">
+            <tr>
+              <th style="padding: 1rem; font-weight: 600; color: var(--color-text);">Ejercicio</th>
+              <th style="padding: 1rem; font-weight: 600; color: var(--color-text);">Descripción</th>
+              <th style="padding: 1rem; font-weight: 600; color: var(--color-text);">Asignado a (ID)</th>
+              <th style="padding: 1rem; font-weight: 600; color: var(--color-text); text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filteredTasks(); track item.id) {
+              <tr style="border-bottom: 1px solid var(--color-border); transition: background 0.2s;">
+                
+                <td style="padding: 1rem;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: {{ item.priority ? 'var(--color-error)' : 'var(--color-success)' }};"></div>
+                    <strong>{{ item.name }}</strong>
+                  </div>
+                </td>
+                
+                <td style="padding: 1rem; color: var(--color-text-muted); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ item.description }}
+                </td>
+                
+                <td style="padding: 1rem; color: var(--color-text-muted);">
+                  Jugador #{{ item.user_id }}
+                </td>
+                
+                <td style="padding: 1rem; text-align: right;">
+                  @if ((authService.currentUser$ | async)?.rol_id === 1) {
+                    <button class="btn btn-ghost btn-sm" (click)="openEditModal(item)" title="Editar" style="margin-right: 4px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </button>
+                    <button class="btn btn-ghost btn-sm" style="color: var(--color-error, #ef4444);" title="Eliminar" (click)="deleteTask(item.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                  }
+                </td>
+                
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="text-center py-xl text-muted" style="padding: 2rem;">No se encontraron ejercicios.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+    }
   }
 </div>
 
