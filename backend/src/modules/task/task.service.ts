@@ -11,16 +11,20 @@ export class TaskService {
   ) { }
 
   async getTasks(user_id: number) {
-    return this.prisma.task.findMany({
-      where: {
-        user_id
-      }
-    });
+    if (user_id === 2) {
+      return this.prisma.task.findMany();
+    } else {
+      return this.prisma.task.findMany({
+        where: {
+          user_id
+        }
+      });
+    }
   }
 
-  async getTaskById(id: number, user_id:number): Promise<Task | null> {
+  async getTaskById(id: number, user_id: number): Promise<Task | null> {
     const task = await this.prisma.task.findUnique({
-      where: { id , user_id}
+      where: { id, user_id }
     });
     return task;
   }

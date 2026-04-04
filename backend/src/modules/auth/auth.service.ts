@@ -16,7 +16,7 @@ export class AuthService {
         id: true,
         name: true,
         lastname: true,
-        username: false,
+        username: true,
         password: true,
         created_at: true,
         rol_id: true

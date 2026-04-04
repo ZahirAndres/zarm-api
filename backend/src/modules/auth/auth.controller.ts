@@ -47,6 +47,7 @@ export class AuthController {
     const payload: any = { 
       id: result.id,
       name: result.name,
+      username: result.username,
       lastname: result.lastname,
       rol_id: result.rol_id,
       created_date: result.created_at,
@@ -91,6 +92,7 @@ export class AuthController {
     const payload: any = {
       id: user.id,
       name: user.name,
+      username: user.username,
       lastname: user.lastname,
       created_date: user.created_at,
     };
