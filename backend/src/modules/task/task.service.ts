@@ -32,17 +32,32 @@ export class TaskService {
     return newTask;
   }
 
-  async updateTask(id: number, taskUpdate: UpdateTaskDto, user_id: number): Promise<Task> {
+  // async updateTask(id: number, taskUpdate: UpdateTaskDto, user_id: number): Promise<Task> {
+  //   const task = await this.prisma.task.update({
+  //     where: { id: id, user_id },
+  //     data: taskUpdate
+  //   });
+  //   return task;
+  // }
+
+  // async deleteTask(id: number, user_id: number): Promise<Task> {
+  //   const task = await this.prisma.task.delete({
+  //     where: { id, user_id }
+  //   });
+  //   return task;
+  // }
+
+  async updateTask(id: number, taskUpdate: UpdateTaskDto): Promise<Task> {
     const task = await this.prisma.task.update({
-      where: { id: id, user_id },
+      where: { id: id }, // Buscamos SOLO por el ID de la tarea
       data: taskUpdate
     });
     return task;
   }
 
-  async deleteTask(id: number, user_id: number): Promise<Task> {
+  async deleteTask(id: number): Promise<Task> {
     const task = await this.prisma.task.delete({
-      where: { id, user_id }
+      where: { id: id } // Buscamos SOLO por el ID de la tarea
     });
     return task;
   }

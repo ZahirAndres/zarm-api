@@ -20,6 +20,7 @@ export class UserService {
         lastname: true,
         username: true,
         created_at: true,
+        rol_id: true,
       },
       where: {
         id: {
@@ -39,6 +40,7 @@ export class UserService {
         lastname: true,
         username: true,
         created_at: true,
+        rol_id: true,
       }
 
     });
@@ -54,6 +56,7 @@ export class UserService {
         lastname: true,
         username: true,
         created_at: true,
+        rol_id: true,
       }
 
     });
@@ -72,6 +75,7 @@ export class UserService {
         lastname: true,
         username: true,
         created_at: true,
+        rol_id: true,
       }
     });
     return newUser;
@@ -87,6 +91,7 @@ export class UserService {
         lastname: true,
         username: true,
         created_at: true,
+        rol_id: true,
       }
     });
     return user;

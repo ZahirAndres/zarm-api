@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { 
     IsNotEmpty,
+    IsNumber,
+    IsOptional,
     IsString,
     MaxLength,
     MinLength
@@ -35,4 +37,8 @@ export class CreateUserDto {
     @MaxLength(100,{ message: "La contraseña no debe exceder los 100 caracteres"})
     @ApiProperty({ description: 'password', example: 'MiPassword123!'})
     password: string;
+
+     @IsOptional()
+        @IsNumber({}, { message: "El ID del rol debe ser un número" })
+        rol_id?: number;
 }

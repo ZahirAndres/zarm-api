@@ -82,11 +82,18 @@
             <input type="text" formControlName="username" class="custom-input" placeholder="Ej. Apodo" />
           </div>
 
-          <div class="form-group mb-lg">
-            <label class="custom-label">Contraseña</label>
+          <div class="form-group mb-sm"> <label class="custom-label">Contraseña</label>
             <input type="password" formControlName="password" class="custom-input" placeholder="Mínimo 8 caracteres" />
           </div>
 
+          <div class="form-group mb-lg">
+            <label class="custom-label">Confirmar Contraseña</label>
+            <input type="password" formControlName="confirmPassword" class="custom-input" placeholder="Repite tu contraseña" />
+            
+            @if (registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched) {
+              <span class="text-error text-xs" style="color: var(--color-error, red); display: block; margin-top: 4px;">Las contraseñas no coinciden.</span>
+            }
+          </div>
           <button type="submit" [disabled]="registerForm.invalid || isLoading" class="btn btn-primary btn-full btn-lg">
             @if(isLoading) { <span class="spinner"></span> } @else { Registrar nuevo miembro }
           </button>

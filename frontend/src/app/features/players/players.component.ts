@@ -1,16 +1,43 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { PlayersService, User } from '../../core/services/players.service';
 
 @Component({
-  selector: 'app-users-list',
+  selector: 'app-players',
   standalone: true,
   templateUrl: './players.component.html',
   styleUrl: './players.component.css'
 })
-export class PlayersComponent {
-  // Ajustado a lo que responde el Backend Real: username, email y el Rol
-  usuariosDemo = [
-    { id: 1, username: 'cmendoza', email: 'cmendoza@coachzone.com', rol: 'Entrenador' },
-    { id: 2, username: 'lramirez', email: 'lramirez@coachzone.com', rol: 'Jugador' },
-    { id: 3, username: 'dtorres', email: 'dtorres@coachzone.com', rol: 'Jugador' },
-  ];
+export class PlayersComponent implements OnInit {
+  private usersService = inject(PlayersService);
+
+  users = signal<User[]>([]);
+  isLoading = signal<boolean>(true);
+
+  ngOnInit() {
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    this.usersService.getUsers().subscribe({
+      next: (data) => {
+        this.users.set(data);
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  // Función para cambiar de Jugador a Entrenador y viceversa
+  toggleRole(user: User) {
+    const newRoleId = user.rol_id === 1 ? 2 : 1; // 1: Entrenador, 2: Jugador
+    
+    // Actualizamos en BD
+    this.usersService.updateUserRole(user.id, newRoleId).subscribe({
+      next: () => {
+        // Actualizamos UI instantáneamente con Signals
+        this.users.update(currentUsers => 
+          currentUsers.map(u => u.id === user.id ? { ...u, rol_id: newRoleId } : u)
+        );
+      }
+    });
+  }
 }

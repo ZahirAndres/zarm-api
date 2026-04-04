@@ -2,7 +2,7 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="onClose()">✕</button>
     
-    <h2>Crear Nuevo Ejercicio 🏀</h2>
+    <h2>{{ taskToEdit ? 'Editar Ejercicio ✏️' : 'Crear Nuevo Ejercicio 🏀' }}</h2>
     
     <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="mt-md">
       
@@ -30,6 +30,9 @@
             <option [value]="player.id">{{ player.username }}</option>
           }
         </select>
+        @if (taskForm.get('user_id')?.invalid && taskForm.get('user_id')?.touched) {
+          <span class="text-error text-xs">Debes asignar un jugador.</span>
+        }
       </div>
 
       <div class="form-group mt-sm" style="display: flex; align-items: center; gap: 8px;">
@@ -42,7 +45,7 @@
       }
 
       <button type="submit" class="btn btn-primary mt-md w-100" [disabled]="isLoading">
-        {{ isLoading ? 'Guardando...' : 'Asignar Ejercicio' }}
+        {{ isLoading ? 'Guardando...' : (taskToEdit ? 'Actualizar' : 'Asignar Ejercicio') }}
       </button>
     </form>
   </div>

@@ -1,5 +1,6 @@
 import { 
     IsBoolean,
+    IsNumber,
     IsOptional,
     IsString,
     MaxLength,
@@ -23,5 +24,9 @@ export class UpdateTaskDto {
     @IsOptional()
     @IsBoolean({ message: "El estado debe ser un valor booleano"})
     priority?: boolean;
+
+    @IsOptional()
+    @IsNumber({}, { message: "El ID del jugador debe ser un número" })
+    user_id?: number
 
 }

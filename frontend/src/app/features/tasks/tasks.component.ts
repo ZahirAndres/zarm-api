@@ -19,6 +19,7 @@ export class TasksComponent implements OnInit {
   tasks = signal<Task[]>([]);
   isLoading = signal<boolean>(true);
   isModalOpen = signal<boolean>(false);
+  selectedTask = signal<Task | null>(null);
 
   ngOnInit() {
     this.loadTasks();
@@ -38,9 +39,22 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  // Métodos simples para el modal usando signals
-  openModal() { this.isModalOpen.set(true); }
-  closeModal() { this.isModalOpen.set(false); }
+  // Modificamos para abrir en modo creación
+  openCreateModal() {
+    this.selectedTask.set(null); 
+    this.isModalOpen.set(true);
+  }
+
+  // Nuevo método para abrir en modo edición
+  openEditModal(task: Task) {
+    this.selectedTask.set(task);
+    this.isModalOpen.set(true);
+  }
+
+  closeModal() {
+    this.isModalOpen.set(false);
+    this.selectedTask.set(null);
+  }
 
   // --- Lógica de Eliminar ---
   deleteTask(id: number) {

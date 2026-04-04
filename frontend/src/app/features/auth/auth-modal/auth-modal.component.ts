@@ -31,13 +31,21 @@ export class AuthModalComponent implements OnInit {
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
 
+  // Formulario de registro actualizado con tus reglas
   registerForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3)]],
-    lastname: ['', [Validators.required, Validators.minLength(3)]],
-    username: ['', [Validators.required, Validators.minLength(3)]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
-  });
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
+    confirmPassword: ['', [Validators.required]]
+  }, { validators: this.passwordMatchValidator }); // Validador personalizado
 
+  // Función para asegurar que las contraseñas coincidan
+  passwordMatchValidator(g: FormGroup) {
+    return g.get('password')?.value === g.get('confirmPassword')?.value
+      ? null : { mismatch: true };
+  }
+  
   isLoading = false;
   loginError = '';
   registerError = '';

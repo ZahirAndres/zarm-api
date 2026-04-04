@@ -40,20 +40,30 @@ export class TaskController {
     return result;
   }
 
+  // @Put("/:id")
+  // public updateTask(@Param("id", ParseIntPipe) id:number, @Body() task:UpdateTaskDto, @Req() request:any ): Promise<Task> {
+  //   const user = request['user']
+  //   return this.taskSvc.updateTask(id,task, user.id);
+  // }
+
+  // @Delete(":id")
+  // public async deleteTask(@Param("id", ParseIntPipe) id:number, @Req() request:any): Promise<boolean> {
+  //   try {
+  //     const user = request['user']
+  //     await this.taskSvc.deleteTask(id, user.id);
+  //   } catch (error) {
+  //     throw new HttpException("Task not found", HttpStatus.NOT_FOUND)
+  //   }
+  //   return true
+  // }
+
   @Put("/:id")
-  public updateTask(@Param("id", ParseIntPipe) id:number, @Body() task:UpdateTaskDto, @Req() request:any ): Promise<Task> {
-    const user = request['user']
-    return this.taskSvc.updateTask(id,task, user.id);
+  public updateTask(@Param("id", ParseIntPipe) id: number, @Body() task: UpdateTaskDto): Promise<Task> {
+    return this.taskSvc.updateTask(id, task);
   }
 
-  @Delete(":id")
-  public async deleteTask(@Param("id", ParseIntPipe) id:number, @Req() request:any): Promise<boolean> {
-    try {
-      const user = request['user']
-      await this.taskSvc.deleteTask(id, user.id);
-    } catch (error) {
-      throw new HttpException("Task not found", HttpStatus.NOT_FOUND)
-    }
-    return true
+  @Delete("/:id")
+  public deleteTask(@Param("id", ParseIntPipe) id: number): Promise<Task> {
+    return this.taskSvc.deleteTask(id);
   }
 }
