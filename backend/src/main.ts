@@ -8,7 +8,6 @@ import helmet from 'helmet';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // V-15: Headers de seguridad HTTP
   app.use(helmet());
 
   // Habilitar CORS con orígenes específicos
@@ -28,7 +27,6 @@ async function bootstrap() {
   // Uso de filtros
   app.useGlobalFilters(new AllExceptionFilter);
 
-  // V-16: Swagger solo disponible en desarrollo
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('ZARM API')

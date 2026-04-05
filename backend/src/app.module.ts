@@ -7,7 +7,6 @@ import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    // V-10: Rate limiting global (10 peticiones por minuto por IP)
     ThrottlerModule.forRoot([{
       ttl: 60000,
       limit: 10,

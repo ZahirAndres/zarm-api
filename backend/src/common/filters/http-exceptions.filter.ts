@@ -12,7 +12,6 @@ export class AllExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        // V-20: Solo exponer mensajes de HttpException, no errores internos
         let message: string;
         if (exception instanceof HttpException) {
             const res = exception.getResponse();

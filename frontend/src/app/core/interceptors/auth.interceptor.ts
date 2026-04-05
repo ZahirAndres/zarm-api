@@ -1,14 +1,15 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+import { catchError, switchMap, throwError, BehaviorSubject, filter, take } from 'rxjs';
+
+let isRefreshing = false;
+let refreshTokenSubject = new BehaviorSubject<any>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
+  const authService = inject(AuthService);
   const token = localStorage.getItem('access_token');
 
-  // Clonamos la solicitud original y le pegamos el token si existe
   let authReq = req;
   if (token) {
     authReq = req.clone({
@@ -16,16 +17,52 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  // Continuamos con el flujo pero también "interceptamos" en caso de que el Token sea inválido (Status 401/403)
+  // Se envía y se manejan errores
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Si el Backend escupe a nuestro usuario por falta de permisos o caducidad
-      if (error.status === 401 || error.status === 403) {
-        // En una app real de Phase 9, intentaríamos el "Refresh Token"
-        // Pero por ahora, simplemente lo obligamos a Log In otra vez
-        localStorage.removeItem('access_token');
-        router.navigate(['/']);
+      
+      // Manejo de error de ThrottlerModule (Peticiones rápidas)
+      if (error.status === 429) {
+        alert('🚦 ¡Wow, vas muy rápido! Has excedido el límite de acciones. Por favor, espera unos segundos e intenta de nuevo.');
       }
+
+      // Token expirado
+      if (error.status === 401 && !req.url.includes('/login') && !req.url.includes('/refresh-token') && !req.url.includes('/logout')) {
+        
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshTokenSubject.next(null);
+
+          return authService.refreshToken().pipe(
+            switchMap((res) => {
+              isRefreshing = false; 
+              refreshTokenSubject.next(res.accessToken); 
+              
+              const newReq = req.clone({
+                setHeaders: { Authorization: `Bearer ${res.accessToken}` }
+              });
+              return next(newReq);
+            }),
+            catchError((refreshErr) => {
+              isRefreshing = false;
+              authService.logout();
+              return throwError(() => refreshErr);
+            })
+          );
+        } else {
+          return refreshTokenSubject.pipe(
+            filter(t => t != null),
+            take(1),
+            switchMap(jwt => {
+              const retryReq = req.clone({
+                setHeaders: { Authorization: `Bearer ${jwt}` }
+              });
+              return next(retryReq);
+            })
+          );
+        }
+      }
+
       return throwError(() => error);
     })
   );

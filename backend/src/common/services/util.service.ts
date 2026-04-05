@@ -28,4 +28,16 @@ export class UtilService {
       return null;
     }
   }
+
+  // sin fecha de expiración para refresh-token
+  public async getPayloadRefreshJWT(token: string): Promise<any> {
+    try {
+      return await this.jwtSrv.verifyAsync(token, { 
+        secret: process.env.JWT_SECRET,
+        ignoreExpiration: true
+      });
+    } catch (error) {
+      return null;
+    }
+  }
 }

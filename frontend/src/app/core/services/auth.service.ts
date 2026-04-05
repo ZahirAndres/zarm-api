@@ -15,7 +15,7 @@ export class AuthService {
   // Estado global reactivo para saber si hay usuario logueado
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  
+
   private router = inject(Router);
 
   constructor() {
@@ -27,7 +27,7 @@ export class AuthService {
       tap(res => {
         if (res.accessToken) {
           localStorage.setItem('access_token', res.accessToken);
-          this.checkToken(); 
+          this.checkToken();
         }
       })
     );
@@ -37,7 +37,33 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/user`, userData);
   }
 
+  getMe() {
+    return this.http.get<any>(`${this.apiUrl}/auth/me`).pipe(
+      tap(profile => {
+        this.currentUserSubject.next(profile);
+      })
+    );
+  }
+
+  refreshToken() {
+    return this.http.post<any>(`${this.apiUrl}/auth/refresh-token`, {}).pipe(
+      tap(res => {
+        if (res.accessToken) {
+          localStorage.setItem('access_token', res.accessToken);
+          this.checkToken();
+        }
+      })
+    );
+  }
+
   logout() {
+    this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({
+      next: () => this.clearLocalSession(),
+      error: () => this.clearLocalSession()
+    });
+  }
+
+  private clearLocalSession() {
     localStorage.removeItem('access_token');
     this.currentUserSubject.next(null);
     this.router.navigate(['/']);
@@ -48,9 +74,14 @@ export class AuthService {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        this.currentUserSubject.next(decodedToken); 
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp && decodedToken.exp < currentTime) {
+          this.clearLocalSession(); // O aquí podrías intentar el refreshToken
+        } else {
+          this.currentUserSubject.next(decodedToken);
+        }
       } catch (e) {
-        this.logout();
+        this.clearLocalSession();
       }
     }
   }
