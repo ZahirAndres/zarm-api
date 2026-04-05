@@ -132,6 +132,7 @@ input, select, textarea {
   background: var(--color-primary-dark);
   transform: translateY(-1px);
   box-shadow: 0 6px 24px rgba(249,115,22,.35);
+  color: #0F0F0F;
 }
 .btn-primary:active { transform: translateY(0); }
 
