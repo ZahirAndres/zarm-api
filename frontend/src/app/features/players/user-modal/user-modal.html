@@ -1,23 +1,45 @@
 <div class="modal-overlay" (click)="close.emit()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="close.emit()">✕</button>
-    <h2>Editar Usuario</h2>
+    
+    <h2 class="form-title">Editar Usuario</h2>
+    
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="mt-md">
+      
       <div class="form-group">
-        <label>Nombre</label>
-        <input type="text" formControlName="name" class="custom-input">
+        <label class="custom-label">Nombre</label>
+        <input type="text" formControlName="name" class="custom-input"
+               [class.error]="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+        
+        @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+          <span class="form-error">El nombre debe tener al menos 3 caracteres.</span>
+        }
       </div>
+
       <div class="form-group mt-sm">
-        <label>Apellido</label>
-        <input type="text" formControlName="lastname" class="custom-input">
+        <label class="custom-label">Apellido</label>
+        <input type="text" formControlName="lastname" class="custom-input"
+               [class.error]="userForm.get('lastname')?.invalid && userForm.get('lastname')?.touched">
+        
+        @if (userForm.get('lastname')?.invalid && userForm.get('lastname')?.touched) {
+          <span class="form-error">El apellido debe tener al menos 3 caracteres.</span>
+        }
       </div>
+
       <div class="form-group mt-sm">
-        <label>Usuario</label>
-        <input type="text" formControlName="username" class="custom-input">
+        <label class="custom-label">Usuario</label>
+        <input type="text" formControlName="username" class="custom-input"
+               [class.error]="userForm.get('username')?.invalid && userForm.get('username')?.touched">
+        
+        @if (userForm.get('username')?.invalid && userForm.get('username')?.touched) {
+          <span class="form-error">El usuario es requerido (mínimo 3 caracteres).</span>
+        }
       </div>
-      <button type="submit" class="btn btn-primary mt-md w-100" [disabled]="userForm.invalid">
-        Guardar Cambios
+
+      <button type="submit" class="btn btn-primary btn-full mt-xl" [disabled]="isLoading">
+        {{ isLoading ? 'Guardando...' : 'Guardar Cambios' }}
       </button>
+
     </form>
   </div>
 </div>

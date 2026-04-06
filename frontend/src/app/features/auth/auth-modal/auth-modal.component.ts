@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, Input, OnInit, inject } from '@angular
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { AlertService } from '../../../shared/services/alert';
 
 @Component({
   selector: 'app-auth-modal',
@@ -14,7 +15,6 @@ export class AuthModalComponent implements OnInit {
   @Input() initialMode: 'login' | 'register' = 'login';
   @Output() close = new EventEmitter<void>();
   
-  // Controla qué panel se muestra ('login' o 'register')
   activeMode: 'login' | 'register' = 'login';
   
   ngOnInit() {
@@ -24,36 +24,55 @@ export class AuthModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private alertService = inject(AlertService);
 
-  // Formularios
   loginForm: FormGroup = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
 
-  // Formulario de registro actualizado con tus reglas
   registerForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
     lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
     username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
+    password: ['', [
+      Validators.required, 
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)
+    ]],
     confirmPassword: ['', [Validators.required]]
-  }, { validators: this.passwordMatchValidator }); // Validador personalizado
+  }, { validators: this.passwordMatchValidator });
 
-  // Función para asegurar que las contraseñas coincidan
+  get passCriteria() {
+    const p = this.registerForm.get('password')?.value || '';
+    return {
+      length: p.length >= 8,
+      upper: /[A-Z]/.test(p),
+      lower: /[a-z]/.test(p),
+      num: /[0-9]/.test(p),
+      special: /[\W_]/.test(p)
+    };
+  }
+
+  get loginPassCriteria() {
+  const p = this.loginForm.get('password')?.value || '';
+  return {
+    length: p.length >= 8,
+    upper: /[A-Z]/.test(p),
+    lower: /[a-z]/.test(p),
+    num: /[0-9]/.test(p),
+    special: /[\W_]/.test(p)
+  };
+}
+
   passwordMatchValidator(g: FormGroup) {
     return g.get('password')?.value === g.get('confirmPassword')?.value
       ? null : { mismatch: true };
   }
   
   isLoading = false;
-  loginError = '';
-  registerError = '';
 
   toggleMode(mode: 'login' | 'register') {
     this.activeMode = mode;
-    this.loginError = '';
-    this.registerError = '';
   }
 
   onClose() {
@@ -66,11 +85,11 @@ export class AuthModalComponent implements OnInit {
       return;
     }
     this.isLoading = true;
-    this.loginError = '';
     
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         if (res.accessToken) {
+          this.alertService.success('¡Bienvenido de vuelta!');
           this.router.navigate(['/dashboard']);
           this.onClose();
         }
@@ -79,10 +98,11 @@ export class AuthModalComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         if (err.status === 401) {
-          this.loginError = 'Usuario o contraseña incorrectos.';
+          this.alertService.warning('Acceso denegado', 'Usuario o contraseña incorrectos.');
         } else {
-          this.loginError = 'Error de conexión.';
+          this.alertService.error('Error', 'Problema de conexión con el servidor.');
         }
+        this.onClose();
       }
     });
   }
@@ -93,21 +113,21 @@ export class AuthModalComponent implements OnInit {
       return;
     }
     this.isLoading = true;
-    this.registerError = '';
+    const { confirmPassword, ...userData } = this.registerForm.value;
     
-    this.authService.register(this.registerForm.value).subscribe({
+    this.authService.register(userData).subscribe({
       next: () => {
         this.isLoading = false;
-        // Si el registro fue exitoso, llenamos el form de login con el usuario creado y giramos
+        this.alertService.success('¡Cuenta creada! Inicia sesión para continuar.');
         this.loginForm.patchValue({ username: this.registerForm.value.username, password: '' });
         this.toggleMode('login');
       },
       error: (err) => {
         this.isLoading = false;
         if (err.status === 409) {
-          this.registerError = 'Ese nombre de usuario ya está en uso.';
+          this.alertService.warning('Usuario duplicado', 'Ese nombre de usuario ya está en uso.');
         } else {
-          this.registerError = 'Ocurrió un error al crear la cuenta.';
+          this.alertService.error('Error', 'Ocurrió un error al crear la cuenta.');
         }
       }
     });

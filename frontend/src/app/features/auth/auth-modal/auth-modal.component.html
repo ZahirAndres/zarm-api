@@ -1,105 +1,147 @@
-<div class="modal-backdrop fade-in" (click)="onClose()"></div>
-<!-- Contenedor general del Modal central -->
-<div class="modal-container scale-in">
-  
-  <!-- Botón cerrar X - Cambiar a icon -->
-  <button class="close-btn" (click)="onClose()">✕</button> 
+<div class="modal-overlay fade-in" (click)="onClose()">
+  <div class="modal-content scale-in" (click)="$event.stopPropagation()">
 
-  <!-- Pestañas Superiores -->
-  <div class="modal-tabs">
-    <button class="tab-btn" [class.active]="activeMode === 'login'" (click)="toggleMode('login')">
-      Iniciar Sesión
-    </button>
-    <button class="tab-btn" [class.active]="activeMode === 'register'" (click)="toggleMode('register')">
-      Crear Cuenta
-    </button>
-    <!-- Línea indicadora naranja -->
-    <div class="tab-indicator" [class.slide-right]="activeMode === 'register'"></div>
-  </div>
+    <button class="close-btn" (click)="onClose()">✕</button>
 
-  <div class="slider-wrapper">
-    <div class="slider-track" [style.transform]="activeMode === 'login' ? 'translateX(0)' : 'translateX(-50%)'">
-      
-      <!-- Lado Izquierdo: LOGIN -->
-      <div class="slider-panel">
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
-          <div class="text-center mb-lg">
-            <h2 class="form-title">Bienvenido de vuelta</h2>
-            <p class="text-muted text-sm mt-xs">Accede para gestionar tu equipo</p>
-          </div>
+    <div class="modal-tabs">
+      <button class="tab-btn" [class.active]="activeMode === 'login'" (click)="toggleMode('login')">
+        Iniciar Sesión
+      </button>
+      <button class="tab-btn" [class.active]="activeMode === 'register'" (click)="toggleMode('register')">
+        Crear Cuenta
+      </button>
+      <div class="tab-indicator" [class.slide-right]="activeMode === 'register'"></div>
+    </div>
 
-          @if (loginError) {
-            <div class="alert-box">{{ loginError }}</div>
-          }
+    <div class="slider-wrapper">
+      <div class="slider-track" [style.transform]="activeMode === 'login' ? 'translateX(0)' : 'translateX(-50%)'">
 
-          <div class="form-group mb-md">
-            <label class="custom-label">Usuario</label>
-            <input type="text" formControlName="username" class="custom-input" placeholder="Tu usuario único" />
-            @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+        <div class="slider-panel">
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <div class="text-center mb-xl">
+              <h2 class="form-title">Bienvenido de vuelta</h2>
+              <p class="text-muted text-sm mt-xs">Accede para gestionar tu equipo</p>
+            </div>
+
+            <div class="form-group">
+              <label class="custom-label">Usuario *</label>
+              <input type="text" formControlName="username" class="custom-input"
+                [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                placeholder="Tu usuario único" />
+              @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
               <span class="form-error">Debes ingresar el usuario</span>
-            }
-          </div>
+              }
+            </div>
 
-          <div class="form-group mb-xl">
-            <label class="custom-label">Contraseña</label>
-            <input type="password" formControlName="password" class="custom-input" />
-            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <div class="form-group mb-xl">
+              <label class="custom-label">Contraseña *</label>
+              <input type="password" formControlName="password" class="custom-input"
+                [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                placeholder="Ingresa tu contraseña" />
+
+              <div class="password-checklist mb-lg">
+                <div class="check-item" [class.valid]="loginPassCriteria.length">
+                  <span class="icon">{{ loginPassCriteria.length ? '✓' : '○' }}</span> 8+ caracteres
+                </div>
+                <div class="check-item" [class.valid]="loginPassCriteria.upper">
+                  <span class="icon">{{ loginPassCriteria.upper ? '✓' : '○' }}</span> Mayúscula
+                </div>
+                <div class="check-item" [class.valid]="loginPassCriteria.lower">
+                  <span class="icon">{{ loginPassCriteria.lower ? '✓' : '○' }}</span> Minúscula
+                </div>
+                <div class="check-item" [class.valid]="loginPassCriteria.num">
+                  <span class="icon">{{ loginPassCriteria.num ? '✓' : '○' }}</span> Número
+                </div>
+                <div class="check-item" [class.valid]="loginPassCriteria.special">
+                  <span class="icon">{{ loginPassCriteria.special ? '✓' : '○' }}</span> Símbolo especial
+                </div>
+              </div>
+              @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
               <span class="form-error">Debes ingresar la contraseña</span>
-            }
-          </div>
-
-          <button type="submit" [disabled]="loginForm.invalid || isLoading" class="btn btn-primary btn-full btn-lg">
-            @if(isLoading) { <span class="spinner"></span> } @else { Entrar }
-          </button>
-        </form>
-      </div>
-
-      <!-- Lado Derecho: REGISTER -->
-      <div class="slider-panel">
-        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
-          <div class="text-center mb-md">
-            <h2 class="form-title">Nueva cuenta</h2>
-            <p class="text-muted text-sm mt-xs">Comienza tu gestión aquí</p>
-          </div>
-
-          @if (registerError) {
-            <div class="alert-box">{{ registerError }}</div>
-          }
-
-          <div class="form-grid mb-sm">
-            <div class="form-group">
-              <label class="custom-label">Nombre</label>
-              <input type="text" formControlName="name" class="custom-input" placeholder="Ej. Zahir" />
+              }
             </div>
-            <div class="form-group">
-              <label class="custom-label">Apellido</label>
-              <input type="text" formControlName="lastname" class="custom-input" placeholder="Ej. Mora" />
+
+            <button type="submit" class="btn btn-primary btn-full btn-lg" [disabled]="loginForm.invalid || isLoading">
+              @if(isLoading) { <span class="spinner"></span> } @else { Entrar }
+            </button>
+          </form>
+        </div>
+
+        <div class="slider-panel">
+          <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+            <div class="text-center mb-xl">
+              <h2 class="form-title">Nueva cuenta</h2>
+              <p class="text-muted text-sm mt-xs">Comienza tu gestión aquí</p>
             </div>
-          </div>
 
-          <div class="form-group mb-sm">
-            <label class="custom-label">Usuario</label>
-            <input type="text" formControlName="username" class="custom-input" placeholder="Ej. Apodo" />
-          </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="custom-label">Nombre *</label>
+                <input type="text" formControlName="name" class="custom-input"
+                  [class.error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+                  placeholder="Ej. Zahir" />
+              </div>
+              <div class="form-group">
+                <label class="custom-label">Apellido *</label>
+                <input type="text" formControlName="lastname" class="custom-input"
+                  [class.error]="registerForm.get('lastname')?.invalid && registerForm.get('lastname')?.touched"
+                  placeholder="Ej. Mora" />
+              </div>
+            </div>
 
-          <div class="form-group mb-sm"> <label class="custom-label">Contraseña</label>
-            <input type="password" formControlName="password" class="custom-input" placeholder="Mínimo 8 caracteres" />
-          </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="custom-label">Usuario *</label>
+                <input type="text" formControlName="username" class="custom-input"
+                  [class.error]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+                  placeholder="Ej. Apodo" />
+              </div>
 
-          <div class="form-group mb-lg">
-            <label class="custom-label">Confirmar Contraseña</label>
-            <input type="password" formControlName="confirmPassword" class="custom-input" placeholder="Repite tu contraseña" />
-            
-            @if (registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched) {
-              <span class="text-error text-xs" style="color: var(--color-error, red); display: block; margin-top: 4px;">Las contraseñas no coinciden.</span>
-            }
-          </div>
-          <button type="submit" [disabled]="registerForm.invalid || isLoading" class="btn btn-primary btn-full btn-lg">
-            @if(isLoading) { <span class="spinner"></span> } @else { Registrar nuevo miembro }
-          </button>
-        </form>
+              <div class="form-group">
+                <label class="custom-label">Contraseña *</label>
+                <input type="password" formControlName="password" class="custom-input"
+                  [class.error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+                  placeholder="Crea tu contraseña" />
+              </div>
+            </div>
+
+            <div class="password-checklist mb-lg">
+              <div class="check-item" [class.valid]="passCriteria.length">
+                <span class="icon">{{ passCriteria.length ? '✓' : '○' }}</span> 8+ caracteres
+              </div>
+              <div class="check-item" [class.valid]="passCriteria.upper">
+                <span class="icon">{{ passCriteria.upper ? '✓' : '○' }}</span> Mayúscula
+              </div>
+              <div class="check-item" [class.valid]="passCriteria.lower">
+                <span class="icon">{{ passCriteria.lower ? '✓' : '○' }}</span> Minúscula
+              </div>
+              <div class="check-item" [class.valid]="passCriteria.num">
+                <span class="icon">{{ passCriteria.num ? '✓' : '○' }}</span> Número
+              </div>
+              <div class="check-item" [class.valid]="passCriteria.special">
+                <span class="icon">{{ passCriteria.special ? '✓' : '○' }}</span> Símbolo especial
+              </div>
+            </div>
+
+            <div class="form-group mb-xl">
+              <label class="custom-label">Confirmar Contraseña *</label>
+              <input type="password" formControlName="confirmPassword" class="custom-input"
+                [class.error]="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched"
+                placeholder="Repite tu contraseña" />
+
+              @if (registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched) {
+              <span class="form-error">Las contraseñas no coinciden.</span>
+              }
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full btn-lg"
+              [disabled]="registerForm.invalid || isLoading">
+              @if(isLoading) { <span class="spinner"></span> } @else { Registrar nuevo miembro }
+            </button>
+          </form>
+        </div>
+
       </div>
-
     </div>
   </div>
 </div>

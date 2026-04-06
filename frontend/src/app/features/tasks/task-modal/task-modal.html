@@ -2,51 +2,60 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="onClose()">✕</button>
     
-    <h2>{{ taskToEdit ? 'Editar Ejercicio ✏️' : 'Crear Nuevo Ejercicio 🏀' }}</h2>
+    <h2 class="form-title">{{ taskToEdit ? 'Editar Ejercicio ✏️' : 'Crear Nuevo Ejercicio 🏀' }}</h2>
     
     <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="mt-md">
       
       <div class="form-group">
-        <label>Nombre del Ejercicio</label>
-        <input type="text" formControlName="name" class="custom-input" placeholder="Ej. Tiros libres">
+        <label class="custom-label">Nombre del Ejercicio</label>
+        <input type="text" formControlName="name" class="custom-input" 
+               [class.error]="taskForm.get('name')?.invalid && taskForm.get('name')?.touched"
+               placeholder="Ej. Tiros libres">
+        
         @if (taskForm.get('name')?.invalid && taskForm.get('name')?.touched) {
-          <span class="text-error text-xs">El nombre debe tener entre 3 y 50 caracteres.</span>
+          <span class="form-error">El nombre debe tener entre 3 y 50 caracteres.</span>
         }
       </div>
 
       <div class="form-group mt-sm">
-        <label>Descripción</label>
-        <textarea formControlName="description" class="custom-input" rows="3" placeholder="Instrucciones del ejercicio..."></textarea>
+        <label class="custom-label">Descripción</label>
+        <textarea formControlName="description" class="custom-input" rows="3" 
+                  [class.error]="taskForm.get('description')?.invalid && taskForm.get('description')?.touched"
+                  placeholder="Instrucciones del ejercicio..."></textarea>
+        
         @if (taskForm.get('description')?.invalid && taskForm.get('description')?.touched) {
-          <span class="text-error text-xs">La descripción es requerida (Max 250 char).</span>
+          <span class="form-error">La descripción es requerida (Máx 250 caracteres).</span>
         }
       </div>
 
       <div class="form-group mt-sm">
-        <label>Asignar a Jugador</label>
-        <select formControlName="user_id" class="custom-input">
+        <label class="custom-label">Asignar a Jugador</label>
+        <select formControlName="user_id" class="custom-input"
+                [class.error]="taskForm.get('user_id')?.invalid && taskForm.get('user_id')?.touched">
           <option [ngValue]="null" disabled>Selecciona un jugador...</option>
           @for (player of players; track player.id) {
             <option [value]="player.id">{{ player.name }} {{ player.lastname }} ({{ player.username }})</option>
           }
         </select>
+        
         @if (taskForm.get('user_id')?.invalid && taskForm.get('user_id')?.touched) {
-          <span class="text-error text-xs">Debes asignar un jugador.</span>
+          <span class="form-error">Debes asignar un jugador obligatoriamente.</span>
         }
       </div>
 
-      <div class="form-group mt-sm" style="display: flex; align-items: center; gap: 8px;">
-        <input type="checkbox" formControlName="priority" id="priorityCheck">
-        <label for="priorityCheck" style="margin: 0; cursor: pointer;">¿Es de Alta Prioridad? 🔴</label>
+      <div class="form-group mt-sm">
+        <label class="custom-label">Nivel de Prioridad</label>
+        <label class="toggle-switch">
+          <input type="checkbox" formControlName="priority">
+          <div class="toggle-slider"></div>
+          <span class="toggle-label">Marcar como Alta Prioridad</span>
+        </label>
       </div>
 
-      @if (errorMsg) {
-        <div class="text-error mt-sm">{{ errorMsg }}</div>
-      }
-
-      <button type="submit" class="btn btn-primary mt-md w-100" [disabled]="isLoading">
-        {{ isLoading ? 'Guardando...' : (taskToEdit ? 'Actualizar' : 'Asignar Ejercicio') }}
+      <button type="submit" class="btn btn-primary btn-full mt-xl" [disabled]="isLoading">
+        {{ isLoading ? 'Guardando...' : (taskToEdit ? 'Actualizar Ejercicio' : 'Asignar Ejercicio') }}
       </button>
+
     </form>
   </div>
 </div>

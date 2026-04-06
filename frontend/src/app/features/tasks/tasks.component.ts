@@ -3,6 +3,7 @@ import { AsyncPipe, DatePipe } from '@angular/common'; // Agregamos DatePipe
 import { TasksService, Task } from '../../core/services/tasks.service';
 import { AuthService } from '../../core/services/auth.service';
 import { TaskModalComponent } from './task-modal/task-modal';
+import { AlertService } from '../../shared/services/alert';
 
 @Component({
   selector: 'app-tasks',
@@ -15,19 +16,20 @@ import { TaskModalComponent } from './task-modal/task-modal';
 export class TasksComponent implements OnInit {
   private tasksService = inject(TasksService);
   public authService = inject(AuthService);
+  public alertService = inject(AlertService);
 
   tasks = signal<Task[]>([]);
   isLoading = signal<boolean>(true);
   isModalOpen = signal<boolean>(false);
   selectedTask = signal<Task | null>(null);
-  searchQuery = signal<string>(''); 
+  searchQuery = signal<string>('');
   viewMode = signal<'grid' | 'table'>('grid');
 
   filteredTasks = computed(() => {
     const query = this.searchQuery().toLowerCase();
-    if (!query) return this.tasks(); 
-    
-    return this.tasks().filter(task => 
+    if (!query) return this.tasks();
+
+    return this.tasks().filter(task =>
       task.name?.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query)
     );
@@ -62,7 +64,7 @@ export class TasksComponent implements OnInit {
 
   // abrir en modo creación
   openCreateModal() {
-    this.selectedTask.set(null); 
+    this.selectedTask.set(null);
     this.isModalOpen.set(true);
   }
 
@@ -79,12 +81,21 @@ export class TasksComponent implements OnInit {
 
   // --- Lógica de Eliminar ---
   deleteTask(id: number) {
-    if (confirm('¿Eliminar ejercicio?')) {
-      this.tasksService.deleteTask(id).subscribe({
-        next: () => {
-          this.tasks.update(prevTasks => prevTasks.filter(t => t.id !== id));
-        }
-      });
-    }
+    this.alertService.confirm(
+      '¿Eliminar tarea?',
+      'Esta acción es permanente y no se puede deshacer.'
+    ).then((result: any) => {
+      if (result.isConfirmed) {
+        this.tasksService.deleteTask(id).subscribe({
+          next: () => {
+            this.tasks.update(prevTasks => prevTasks.filter(t => t.id !== id));
+            this.alertService.success('Tarea eliminada correctamente');
+          },
+          error: (err) => {
+            this.alertService.error('Error al eliminar', err.message);
+          }
+        });
+      }
+    });
   }
 }

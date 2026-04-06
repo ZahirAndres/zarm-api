@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, Input, inject, OnInit } from '@angular
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Task, TasksService } from '../../../core/services/tasks.service';
 import { PlayersService, User } from '../../../core/services/players.service'; 
+import { AlertService } from '../../../shared/services/alert';
 
 @Component({
   selector: 'app-task-modal',
@@ -18,6 +19,7 @@ export class TaskModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private tasksService = inject(TasksService);
   private playersService = inject(PlayersService); 
+  private alertService = inject(AlertService);
 
   taskForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -27,7 +29,6 @@ export class TaskModalComponent implements OnInit {
   });
 
   isLoading = false;
-  errorMsg = '';
   players: User[] = [];
 
   ngOnInit() {
@@ -37,7 +38,7 @@ export class TaskModalComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar la lista de jugadores', err);
-        this.errorMsg = 'No se pudieron cargar los jugadores.';
+        this.alertService.error('Error al cargar la lista de jugadores', 'Hubo un problema de conexión con el servidor.');
       }
     });
 
@@ -62,39 +63,27 @@ export class TaskModalComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.errorMsg = '';
-
     const taskData = { 
       ...this.taskForm.value, 
       user_id: Number(this.taskForm.value.user_id) 
     };
 
-    if (this.taskToEdit) {
-      this.tasksService.updateTask(this.taskToEdit.id, taskData).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.taskSaved.emit();
-          this.close.emit();
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.errorMsg = 'Ocurrió un error al actualizar.';
-          console.error(err);
-        }
-      });
-    } else {
-      this.tasksService.createTask(taskData).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.taskSaved.emit();
-          this.close.emit();
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.errorMsg = 'Ocurrió un error al crear.';
-          console.error(err);
-        }
-      });
-    }
+    const request$ = this.taskToEdit 
+      ? this.tasksService.updateTask(this.taskToEdit.id, taskData)
+      : this.tasksService.createTask(taskData);
+
+    request$.subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.alertService.success(this.taskToEdit ? 'Ejercicio actualizado' : 'Ejercicio asignado');
+        this.taskSaved.emit();
+        this.close.emit();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.alertService.error('Error al guardar', 'Hubo un problema de conexión con el servidor.');
+        this.close.emit();
+      }
+    });
   }
 }

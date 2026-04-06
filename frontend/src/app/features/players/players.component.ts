@@ -3,6 +3,7 @@ import { PlayersService, User } from '../../core/services/players.service';
 import { AsyncPipe } from '@angular/common';
 import { UserModalComponent } from './user-modal/user-modal';
 import { AuthService } from '../../core/services/auth.service';
+import { AlertService } from '../../shared/services/alert';
 
 @Component({
   selector: 'app-players',
@@ -14,6 +15,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class PlayersComponent implements OnInit {
   public authService = inject(AuthService);
   private usersService = inject(PlayersService);
+  private alertService = inject(AlertService);
 
   users = signal<User[]>([]);
   isLoading = signal<boolean>(true);
@@ -22,11 +24,11 @@ export class PlayersComponent implements OnInit {
   isModalOpen = signal<boolean>(false);
   selectedUser = signal<User | null>(null);
 
-  
+
   ngOnInit() {
     this.loadUsers();
   }
-  
+
   loadUsers() {
     this.usersService.getUsers().subscribe({
       next: (data) => {
@@ -35,46 +37,46 @@ export class PlayersComponent implements OnInit {
       }
     });
   }
-  
+
   // Filtro 
   updateSearch(event: Event) {
     const input = event.target as HTMLInputElement;
     this.searchQuery.set(input.value);
   }
-  
+
   setViewMode(mode: 'grid' | 'table') {
     this.viewMode.set(mode);
   }
-  
+
   // Función para cambiar de Jugador a Entrenador y viceversa
   toggleRole(user: User) {
     const newRoleId = user.rol_id === 1 ? 2 : 1; // 1: Entrenador, 2: Jugador
     this.usersService.updateUserRole(user.id, newRoleId).subscribe({
       next: () => {
-        this.users.update(currentUsers => 
+        this.users.update(currentUsers =>
           currentUsers.map(u => u.id === user.id ? { ...u, rol_id: newRoleId } : u)
         );
       }
     });
   }
-  
+
   // Editar
   openEditModal(user: User) {
     this.selectedUser.set(user); // Guardamos qué usuario queremos editar
     this.isModalOpen.set(true);  // Abrimos el modal
   }
-  
+
   // Función para cerrarlo
   closeModal() {
     this.isModalOpen.set(false);
     this.selectedUser.set(null);
   }
-  
-  filteredUsers = computed(()=>{
+
+  filteredUsers = computed(() => {
     const query = this.searchQuery().toLowerCase();
-    if(!query) return this.users();
-  
-    return this.users().filter(user => 
+    if (!query) return this.users();
+
+    return this.users().filter(user =>
       user.username?.toLowerCase().includes(query) ||
       user.name?.toLowerCase().includes(query) ||
       user.lastname?.toLowerCase().includes(query)
@@ -83,13 +85,21 @@ export class PlayersComponent implements OnInit {
 
   // Eliminar
   deleteUser(id: number) {
-    if (confirm('¿Estás seguro de que quieres eliminar a este usuario permanentemente?')) {
-      this.usersService.deleteUser(id).subscribe({
-        next: () => {
-          // Actualizamos la lista local al instante
-          this.users.update(prev => prev.filter(u => u.id !== id));
-        }
-      });
-    }
+    this.alertService.confirm(
+      '¿Eliminar usuario?',
+      'Esta acción es permanente y no se puede deshacer.'
+    ).then((result) => {
+      if (result.isConfirmed) {
+        this.usersService.deleteUser(id).subscribe({
+          next: () => {
+            this.users.update(prev => prev.filter(u => u.id !== id));
+            this.alertService.success('Usuario eliminado de la plantilla');
+          },
+          error: (err) => {
+            this.alertService.error('Error al eliminar', 'Hubo un problema al conectar con el servidor.');
+          }
+        });
+      }
+    });
   }
 }

@@ -76,7 +76,7 @@ export class AuthController {
     }
 
     const user = await this.authSvc.getUserById(userSession.id);
-    if (!user || !user.hash) throw new AppException('Acceso Denegado', HttpStatus.FORBIDDEN, '0');
+    if (!user || !user.hash) throw new AppException('Acceso denegado', HttpStatus.FORBIDDEN, '0');
 
     if (!(user.hash === userSession.hash)) throw new AppException('Token inválido', HttpStatus.FORBIDDEN, '0');
 
