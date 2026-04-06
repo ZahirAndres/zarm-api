@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
@@ -106,16 +106,18 @@ export class UserController {
 
   @Delete(":id")
   @UseGuards(AuthGuard)
-  public async deleteUser(@Param("id", ParseIntPipe) id: number, @Req() request: any): Promise<boolean> {
+  public async deleteUser(@Param("id", ParseIntPipe) id: number, @Req() request: any, @Query("force") force?: string): Promise<boolean> {
     const session = request['user'];
     
     if (session.id !== id && session.rol_id !== 1) {
       throw new HttpException('No tienes permiso para eliminar este usuario', HttpStatus.FORBIDDEN);
     }
 
-    const validate = await this.userSvc.getTaskById(id);
-    if (validate.length > 0) {
-      throw new HttpException('El usuario tiene tareas asignadas', HttpStatus.CONFLICT)
+    if (force !== 'true') {
+      const validate = await this.userSvc.getTaskById(id);
+      if (validate.length > 0) {
+        throw new HttpException('El usuario tiene tareas asignadas', HttpStatus.CONFLICT);
+      }
     }
     const result = await this.userSvc.deleteUser(id);
     if (!result) {

@@ -32,7 +32,7 @@ export class PlayersService {
     return this.http.patch<User>(`${this.apiUrl}/${id}`, userData);
   }
 
-  deleteUser(id: number) {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
+  deleteUser(id: number, force: boolean = false) {
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}?force=${force}`);
   }
 }

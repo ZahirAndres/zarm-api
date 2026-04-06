@@ -90,15 +90,30 @@ export class PlayersComponent implements OnInit {
       'Esta acción es permanente y no se puede deshacer.'
     ).then((result) => {
       if (result.isConfirmed) {
-        this.usersService.deleteUser(id).subscribe({
-          next: () => {
-            this.users.update(prev => prev.filter(u => u.id !== id));
-            this.alertService.success('Usuario eliminado de la plantilla');
-          },
-          error: (err) => {
-            this.alertService.error('Error al eliminar', 'Hubo un problema al conectar con el servidor.');
-          }
-        });
+        this.executeDelete(id, false); 
+      }
+    });
+  }
+
+  private executeDelete(id: number, force: boolean) {
+    this.usersService.deleteUser(id, force).subscribe({
+      next: () => {
+        this.users.update(prev => prev.filter(u => u.id !== id));
+        this.alertService.success(force ? 'Usuario y tareas eliminados' : 'Usuario eliminado de la plantilla');
+      },
+      error: (err) => {
+        if (err.error.statusCode === 409 && !force) {
+          this.alertService.confirm(
+            '¡Alto',
+            'Este usuario tiene tareas asignadas. Si lo eliminas, también se borrarán todas sus tareas. ¿Estás absolutamente seguro?'
+          ).then((confirmForce) => {
+            if (confirmForce.isConfirmed) {
+              this.executeDelete(id, true);
+            }
+          });
+        } else {
+          this.alertService.error('Error al eliminar', 'Hubo un problema al conectar con el servidor.');
+        }
       }
     });
   }
