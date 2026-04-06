@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { AuthModalComponent } from '../../../features/auth/auth-modal/auth-modal.component';
 import { UserModalComponent } from '../../../features/players/user-modal/user-modal';
 import { User } from '../../../core/services/players.service';
+import { AlertService } from '../../services/alert';
 
 @Component({
   selector: 'app-navbar',
@@ -15,11 +16,12 @@ import { User } from '../../../core/services/players.service';
 })
 export class NavbarComponent {
   authService = inject(AuthService);
+  alertService = inject(AlertService);
   menuOpen = false;
   isProfileModalOpen = signal<boolean>(false);
   currentUserData = signal<User | null>(null);
 
-  isAuthModalOpen = false; 
+  isAuthModalOpen = false;
 
 
   openProfileModal(userFromAuth: any) {
@@ -54,7 +56,9 @@ export class NavbarComponent {
   }
 
   onProfileSaved() {
-    alert('Perfil actualizado con éxito. Verás los cambios en tu próximo inicio de sesión.');
+    this.alertService.success(
+      "Perfil actualizado con éxito. Verás los cambios en tu próximo inicio de sesión."
+    );
     this.closeProfileModal();
   }
 }
