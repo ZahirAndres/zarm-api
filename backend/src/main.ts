@@ -25,7 +25,8 @@ async function bootstrap() {
   }))
 
   // Uso de filtros
-  app.useGlobalFilters(new AllExceptionFilter);
+  // dejar que netjs contruya el filtro por defecto
+  // app.useGlobalFilters(new AllExceptionFilter);
 
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()

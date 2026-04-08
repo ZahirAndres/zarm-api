@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseFilters, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login.user.dto';
@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { AppException } from 'src/common/exception/app.exception';
 import { RefreshAuthGuard } from 'src/common/guards/refresh.auth.guard';
+import { AllExceptionFilter } from 'src/common/filters/http-exceptions.filter';
 
 @Controller('api/auth')
 export class AuthController {
@@ -111,5 +112,15 @@ export class AuthController {
   public async logout(@Req() request: any): Promise<void> {
     const session = request['user'];
     await this.authSvc.updateHash(session.id, null);
+  }
+
+  // Controlador para probar los logs
+  @Get('test-logs')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Prueba los logs' })
+  public async testLogs(@Req() request: any) {
+    const user = request['user'];
+    throw new HttpException('Error de prueba para el regitro de logs', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
