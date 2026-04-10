@@ -49,42 +49,6 @@ export class UserController {
   }
 
 
-  // @Patch("/:id")
-  // @UseGuards(AuthGuard)
-  // public async updateUser(@Param("id", ParseIntPipe) id: number, @Body() user: UpdateUserDto, @Req() request: any): Promise<User> {
-  //   const session = request['user'];
-  //   if (session.id !== id)
-  //     throw new HttpException('No tienes permiso para modificar este usuario', HttpStatus.FORBIDDEN);
-
-  //   if (user.password) {
-  //     user.password = await this.utilSvc.hash(user.password);
-  //   }
-
-  //   const result = await this.userSvc.updateUser(id, user);
-  //   if (result == undefined)
-  //     throw new HttpException(`El usuario con ${id} no existe`, HttpStatus.CONFLICT);
-  //   return result;
-  // }
-
-  // @Delete(":id")
-  // @UseGuards(AuthGuard)
-  // public async deleteUser(@Param("id", ParseIntPipe) id: number, @Req() request: any): Promise<boolean> {
-  //   const session = request['user'];
-  //   if (session.id !== id)
-  //     throw new HttpException('No tienes permiso para eliminar este usuario', HttpStatus.FORBIDDEN);
-
-  //   const validate = await this.userSvc.getTaskById(id);
-  //   if (validate.length > 0) {
-  //     throw new HttpException('El usuario tiene tareas asignadas', HttpStatus.CONFLICT)
-  //   }
-  //   const result = await this.userSvc.deleteUser(id);
-  //   if (!result) {
-  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND)
-  //   }
-  //   return true
-  // }
-
-
   @Patch("/:id")
   @UseGuards(AuthGuard)
   public async updateUser(@Param("id", ParseIntPipe) id: number, @Body() user: UpdateUserDto, @Req() request: any): Promise<User> {

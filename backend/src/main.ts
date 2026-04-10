@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-// import { AllExceptionFilter } from './common/filters/http-exceptions.filter';
+
 import helmet from 'helmet';
 import basicAuth from 'express-basic-auth';
 
@@ -24,10 +24,6 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
     transform: true,
   }));
-
-  // Uso de filtros
-  // dejar que netjs contruya el filtro por defecto
-  // app.useGlobalFilters(new AllExceptionFilter);
 
   if (process.env.NODE_ENV !== 'production') {
     
