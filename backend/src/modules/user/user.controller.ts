@@ -27,8 +27,7 @@ export class UserController {
   public async getUserById(@Param("id", ParseIntPipe) id: number): Promise<User> {
     const result = await this.userSvc.getUserById(id);
     if (result == undefined)
-      //  throw new NotFoundException(`Tarea con ID ${id} no encontrada`);
-      throw new HttpException(`Tarea con ID ${id} no encontrada`, HttpStatus.NOT_FOUND)
+      throw new HttpException(`Usuario con ID ${id} no encontrado`, HttpStatus.NOT_FOUND)
     return result;
   }
 

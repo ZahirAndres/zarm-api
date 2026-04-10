@@ -1,4 +1,4 @@
-import { Component, OnInit, Query, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { PlayersService, User } from '../../core/services/players.service';
 import { AsyncPipe } from '@angular/common';
 import { UserModalComponent } from './user-modal/user-modal';

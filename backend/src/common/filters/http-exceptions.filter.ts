@@ -1,7 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
 import { Request, Response } from "express";
 import { PrismaService } from "../services/prisma.service";
-import { log } from "console";
+
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
 
@@ -15,7 +15,7 @@ export class AllExceptionFilter implements ExceptionFilter {
         const status = exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-        //TODO: Guardar el log en la base de datos antes de regresar el response
+
         let message: string;
         if (exception instanceof HttpException) {
             const res = exception.getResponse();

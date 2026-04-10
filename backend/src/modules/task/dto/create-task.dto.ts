@@ -9,8 +9,6 @@ import {
 
 export class CreateTaskDto {
 
-    // id?: number;
-
     @IsString({ message: "El nombre debe ser un texto"})
     @IsNotEmpty()
     @MinLength(3, {message: "El nombre debe tener al menos los 3 caracteres"})

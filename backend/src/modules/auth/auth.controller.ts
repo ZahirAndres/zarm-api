@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseFilters, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login.user.dto';
@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { AppException } from 'src/common/exception/app.exception';
 import { RefreshAuthGuard } from 'src/common/guards/refresh.auth.guard';
-import { AllExceptionFilter } from 'src/common/filters/http-exceptions.filter';
+
 
 @Controller('api/auth')
 export class AuthController {
