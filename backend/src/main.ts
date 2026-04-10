@@ -2,8 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AllExceptionFilter } from './common/filters/http-exceptions.filter';
+// import { AllExceptionFilter } from './common/filters/http-exceptions.filter';
 import helmet from 'helmet';
+import basicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,25 +18,36 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // pipe para realizar la validación de forma global
+  // Pipe para realizar la validación de forma global
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
-  }))
+  }));
 
   // Uso de filtros
   // dejar que netjs contruya el filtro por defecto
   // app.useGlobalFilters(new AllExceptionFilter);
 
   if (process.env.NODE_ENV !== 'production') {
+    
+    app.use(
+      ['/api/docs', '/api/docs-json'], 
+      basicAuth({
+        challenge: true,
+        users: {
+          [process.env.SWAGGER_USER || 'admin']: process.env.SWAGGER_PASSWORD || '1234',
+        },
+      }),
+    );
+    
     const config = new DocumentBuilder()
       .setTitle('ZARM API')
       .setDescription('Documentación de la API')
       .setVersion('1.0.0')
-      .addBearerAuth()
       .addServer("http://127.0.0.1:3000", "Servidor de pruebas")
-      .build()
+      .addBearerAuth() 
+      .build();
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
@@ -44,13 +56,3 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
-
-//? POSTGRES
-//! npm i pg
-//! npm i @types/pg
-
-//? MYSQL
-//! npm i mysql2
-//! npm i @types/mysql
-
-//! npm i @nestjs/swagger
