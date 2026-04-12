@@ -22,9 +22,9 @@ export class UserModalComponent implements OnInit {
   isLoading = false; 
 
   userForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(3)]],
-    lastname: ['', [Validators.required, Validators.minLength(3)]],
-    username: ['', [Validators.required, Validators.minLength(3)]]
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/)]],
+    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250), Validators.pattern(/^[^<>]*$/)]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/)]]
   });
   
   ngOnInit() {

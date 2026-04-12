@@ -22,8 +22,8 @@ export class TaskModalComponent implements OnInit {
   private alertService = inject(AlertService);
 
   taskForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-    description: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150), Validators.pattern(/^[^<>]*$/)]],
+    description: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/)]],
     priority: [false],
     user_id: [null, Validators.required]
   });

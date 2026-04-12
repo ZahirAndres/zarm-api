@@ -3,6 +3,7 @@ import {
     IsBoolean,
     IsNotEmpty,
     IsString,
+    Matches,
     MaxLength,
     MinLength
 } from "class-validator";
@@ -12,15 +13,17 @@ export class CreateTaskDto {
     @IsString({ message: "El nombre debe ser un texto"})
     @IsNotEmpty()
     @MinLength(3, {message: "El nombre debe tener al menos los 3 caracteres"})
-    @MaxLength(50, {message: "El nombre no debe exceder los 50 caracteres"})
-    @ApiProperty({ description: 'name', example: 'Zahir'})
+    @MaxLength(150, {message: "El nombre no debe exceder los 150 caracteres"})
+    @Matches(/^[^<>]*$/, { message: "El nombre no debe contener caracteres como < o >" })
+    @ApiProperty({ description: 'name', example: 'Tiros libres'})
     name: string;
 
     @IsString({ message: "La descripción debe ser un texto"})
     @IsNotEmpty()
     @MinLength(3,{ message: "La descripción debe tener al menos 3 caracteres"})
-    @MaxLength(250,{ message: "La descripción no debe exceder los 250 caracteres"})
-    @ApiProperty({ description: 'description', example: 'This is a description'})
+    @MaxLength(200,{ message: "La descripción no debe exceder los 200 caracteres"})
+    @Matches(/^[^<>]*$/, { message: "La descripción no debe contener caracteres como < o >" })
+    @ApiProperty({ description: 'description', example: 'Práctica de tiros libres'})
     description: string;
 
     @IsNotEmpty()

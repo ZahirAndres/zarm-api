@@ -8,37 +8,53 @@
       
       <div class="form-group">
         <label class="custom-label">Nombre del Ejercicio</label>
-        <input type="text" formControlName="name" class="custom-input" 
-               [class.error]="taskForm.get('name')?.invalid && taskForm.get('name')?.touched"
+        <input type="text" formControlName="name" class="custom-input" maxlength="150"
+               [class.error]="taskForm.get('name')?.invalid && (taskForm.get('name')?.dirty || taskForm.get('name')?.touched)"
                placeholder="Ej. Tiros libres">
         
-        @if (taskForm.get('name')?.invalid && taskForm.get('name')?.touched) {
-          <span class="form-error">El nombre debe tener entre 3 y 50 caracteres.</span>
+        @if (taskForm.get('name')?.invalid && (taskForm.get('name')?.dirty || taskForm.get('name')?.touched)) {
+          @if (taskForm.get('name')?.errors?.['required']) {
+            <span class="form-error">El nombre del ejercicio es requerido.</span>
+          } @else if (taskForm.get('name')?.errors?.['minlength']) {
+            <span class="form-error">El nombre debe tener al menos 3 caracteres.</span>
+          } @else if (taskForm.get('name')?.errors?.['maxlength']) {
+            <span class="form-error">El nombre no debe exceder los 150 caracteres.</span>
+          } @else if (taskForm.get('name')?.errors?.['pattern']) {
+            <span class="form-error">No se permiten caracteres especiales como &lt; o &gt;.</span>
+          }
         }
       </div>
 
       <div class="form-group mt-sm">
         <label class="custom-label">Descripción</label>
-        <textarea formControlName="description" class="custom-input" rows="3" 
-                  [class.error]="taskForm.get('description')?.invalid && taskForm.get('description')?.touched"
+        <textarea formControlName="description" class="custom-input" rows="3" maxlength="200"
+                  [class.error]="taskForm.get('description')?.invalid && (taskForm.get('description')?.dirty || taskForm.get('description')?.touched)"
                   placeholder="Instrucciones del ejercicio..."></textarea>
         
-        @if (taskForm.get('description')?.invalid && taskForm.get('description')?.touched) {
-          <span class="form-error">La descripción es requerida (Máx 250 caracteres).</span>
+        @if (taskForm.get('description')?.invalid && (taskForm.get('description')?.dirty || taskForm.get('description')?.touched)) {
+          @if (taskForm.get('description')?.errors?.['required']) {
+            <span class="form-error">La descripción es requerida.</span>
+          } @else if (taskForm.get('description')?.errors?.['minlength']) {
+            <span class="form-error">La descripción debe tener al menos 3 caracteres.</span>
+          } @else if (taskForm.get('description')?.errors?.['maxlength']) {
+            <span class="form-error">La descripción no debe exceder los 200 caracteres.</span>
+          } @else if (taskForm.get('description')?.errors?.['pattern']) {
+            <span class="form-error">No se permiten caracteres especiales como &lt; o &gt;.</span>
+          }
         }
       </div>
 
       <div class="form-group mt-sm">
         <label class="custom-label">Asignar a Jugador</label>
         <select formControlName="user_id" class="custom-input"
-                [class.error]="taskForm.get('user_id')?.invalid && taskForm.get('user_id')?.touched">
+                [class.error]="taskForm.get('user_id')?.invalid && (taskForm.get('user_id')?.dirty || taskForm.get('user_id')?.touched)">
           <option [ngValue]="null" disabled>Selecciona un jugador...</option>
           @for (player of players; track player.id) {
             <option [value]="player.id">{{ player.name }} {{ player.lastname }} ({{ player.username }})</option>
           }
         </select>
         
-        @if (taskForm.get('user_id')?.invalid && taskForm.get('user_id')?.touched) {
+        @if (taskForm.get('user_id')?.invalid && (taskForm.get('user_id')?.dirty || taskForm.get('user_id')?.touched)) {
           <span class="form-error">Debes asignar un jugador obligatoriamente.</span>
         }
       </div>

@@ -8,31 +8,55 @@
       
       <div class="form-group">
         <label class="custom-label">Nombre</label>
-        <input type="text" formControlName="name" class="custom-input"
-               [class.error]="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+        <input type="text" formControlName="name" class="custom-input" maxlength="200"
+               [class.error]="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)">
         
-        @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
-          <span class="form-error">El nombre debe tener al menos 3 caracteres.</span>
+        @if (userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)) {
+          @if (userForm.get('name')?.errors?.['required']) {
+            <span class="form-error">El nombre es requerido.</span>
+          } @else if (userForm.get('name')?.errors?.['minlength']) {
+            <span class="form-error">El nombre debe tener al menos 3 caracteres.</span>
+          } @else if (userForm.get('name')?.errors?.['maxlength']) {
+            <span class="form-error">El nombre no debe exceder los 200 caracteres.</span>
+          } @else if (userForm.get('name')?.errors?.['pattern']) {
+            <span class="form-error">No se permiten caracteres especiales como &lt; o &gt;.</span>
+          }
         }
       </div>
 
       <div class="form-group mt-sm">
         <label class="custom-label">Apellido</label>
-        <input type="text" formControlName="lastname" class="custom-input"
-               [class.error]="userForm.get('lastname')?.invalid && userForm.get('lastname')?.touched">
+        <input type="text" formControlName="lastname" class="custom-input" maxlength="250"
+               [class.error]="userForm.get('lastname')?.invalid && (userForm.get('lastname')?.dirty || userForm.get('lastname')?.touched)">
         
-        @if (userForm.get('lastname')?.invalid && userForm.get('lastname')?.touched) {
-          <span class="form-error">El apellido debe tener al menos 3 caracteres.</span>
+        @if (userForm.get('lastname')?.invalid && (userForm.get('lastname')?.dirty || userForm.get('lastname')?.touched)) {
+          @if (userForm.get('lastname')?.errors?.['required']) {
+            <span class="form-error">El apellido es requerido.</span>
+          } @else if (userForm.get('lastname')?.errors?.['minlength']) {
+            <span class="form-error">El apellido debe tener al menos 3 caracteres.</span>
+          } @else if (userForm.get('lastname')?.errors?.['maxlength']) {
+            <span class="form-error">El apellido no debe exceder los 250 caracteres.</span>
+          } @else if (userForm.get('lastname')?.errors?.['pattern']) {
+            <span class="form-error">No se permiten caracteres especiales como &lt; o &gt;.</span>
+          }
         }
       </div>
 
       <div class="form-group mt-sm">
         <label class="custom-label">Usuario</label>
-        <input type="text" formControlName="username" class="custom-input"
-               [class.error]="userForm.get('username')?.invalid && userForm.get('username')?.touched">
+        <input type="text" formControlName="username" class="custom-input" maxlength="100"
+               [class.error]="userForm.get('username')?.invalid && (userForm.get('username')?.dirty || userForm.get('username')?.touched)">
         
-        @if (userForm.get('username')?.invalid && userForm.get('username')?.touched) {
-          <span class="form-error">El usuario es requerido (mínimo 3 caracteres).</span>
+        @if (userForm.get('username')?.invalid && (userForm.get('username')?.dirty || userForm.get('username')?.touched)) {
+          @if (userForm.get('username')?.errors?.['required']) {
+            <span class="form-error">El usuario es requerido.</span>
+          } @else if (userForm.get('username')?.errors?.['minlength']) {
+            <span class="form-error">El usuario debe tener al menos 3 caracteres.</span>
+          } @else if (userForm.get('username')?.errors?.['maxlength']) {
+            <span class="form-error">El usuario no debe exceder los 100 caracteres.</span>
+          } @else if (userForm.get('username')?.errors?.['pattern']) {
+            <span class="form-error">No se permiten caracteres especiales como &lt; o &gt;.</span>
+          }
         }
       </div>
 

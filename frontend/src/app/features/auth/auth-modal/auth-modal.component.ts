@@ -27,14 +27,14 @@ export class AuthModalComponent implements OnInit {
   private alertService = inject(AlertService);
 
   loginForm: FormGroup = this.fb.group({
-    username: ['', [Validators.required, Validators.minLength(3)]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/)]],
+    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]]
   });
 
   registerForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
-    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
-    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/)]],
+    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250), Validators.pattern(/^[^<>]*$/)]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/)]],
     password: ['', [
       Validators.required, 
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
+import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class LoginUserDto {
 
@@ -7,6 +7,7 @@ export class LoginUserDto {
     @IsNotEmpty()
     @MinLength(3, { message: "El usuario debe tener al menos 3 caracteres" })
     @MaxLength(100, { message: "El usuario no debe exceder los 100 caracteres" })
+    @Matches(/^[^<>]*$/, { message: "El usuario no debe contener caracteres como < o >" })
     @ApiProperty({ description: 'username', example: 'MrMexico2014' })
     username: string;
 

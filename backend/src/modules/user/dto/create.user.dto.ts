@@ -4,6 +4,7 @@ import {
     IsNumber,
     IsOptional,
     IsString,
+    Matches,
     MaxLength,
     MinLength
 } from "class-validator";
@@ -13,6 +14,7 @@ export class CreateUserDto {
     @IsNotEmpty()
     @MinLength(3, {message: "El nombre debe tener al menos los 3 caracteres"})
     @MaxLength(200, {message: "El nombre no debe exceder los 200 caracteres"})
+    @Matches(/^[^<>]*$/, { message: "El nombre no debe contener caracteres como < o >" })
     @ApiProperty({ description: 'name', example: 'Zahir'})
     name: string;
 
@@ -20,6 +22,7 @@ export class CreateUserDto {
     @IsNotEmpty()
     @MinLength(3,{ message: "El apellido debe tener al menos 3 caracteres"})
     @MaxLength(250,{ message: "El apellido no debe exceder los 250 caracteres"})
+    @Matches(/^[^<>]*$/, { message: "El apellido no debe contener caracteres como < o >" })
     @ApiProperty({ description: 'lastname', example: 'Rodríguez'})
     lastname: string;
 
@@ -27,6 +30,7 @@ export class CreateUserDto {
     @IsNotEmpty()
     @MinLength(3,{ message: "El usuario debe tener al menos 3 caracteres"})
     @MaxLength(100,{ message: "El usuario no debe exceder los 100 caracteres"})
+    @Matches(/^[^<>]*$/, { message: "El usuario no debe contener caracteres como < o >" })
     @ApiProperty({ description: 'username', example: 'MrMexico2014'})
     username: string;
 
