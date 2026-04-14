@@ -6,7 +6,6 @@ import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
 
-  // ── Portada Libre (Aquí vivirá el Auth Modal) ───────────────
   {
     path: '',
     canActivate: [publicGuard],
@@ -14,7 +13,6 @@ export const routes: Routes = [
       import('./features/dashboard/home.component').then(m => m.HomeComponent)
   },
 
-  // ── Rutas del dashboard (Con Navbar y contenido principal) ───────────────
   {
     path: '',
     component: DashboardLayoutComponent,

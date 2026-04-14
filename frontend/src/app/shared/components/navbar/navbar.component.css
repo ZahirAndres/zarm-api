@@ -106,7 +106,6 @@
 
 /* --- Responsive (Móviles) --- */
 @media (max-width: 768px) {
-  /* Ocultar los enlaces por defecto en móvil */
   .navbar-links {
     position: absolute;
     top: var(--navbar-height);
@@ -125,7 +124,6 @@
     transition: all var(--transition);
   }
 
-  /* Mostrar los enlaces cuando isMenuOpen es true (clase .open) */
   .navbar-links.open {
     transform: translateY(0);
     opacity: 1;
@@ -141,7 +139,6 @@
 
 /* --- Responsive (Escritorio) --- */
 @media (min-width: 769px) {
-  /* Ocultar SOLO el botón de menú hamburguesa en escritorio */
   .menu-toggle-btn {
     display: none;
   }

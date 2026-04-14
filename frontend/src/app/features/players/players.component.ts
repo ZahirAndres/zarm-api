@@ -19,8 +19,8 @@ export class PlayersComponent implements OnInit {
 
   users = signal<User[]>([]);
   isLoading = signal<boolean>(true);
-  searchQuery = signal<string>(''); // filtro
-  viewMode = signal<'grid' | 'table'>('grid'); // vista
+  searchQuery = signal<string>(''); 
+  viewMode = signal<'grid' | 'table'>('grid');
   isModalOpen = signal<boolean>(false);
   selectedUser = signal<User | null>(null);
 
@@ -50,7 +50,7 @@ export class PlayersComponent implements OnInit {
 
   // Función para cambiar de Jugador a Entrenador y viceversa
   toggleRole(user: User) {
-    const newRoleId = user.rol_id === 1 ? 2 : 1; // 1: Entrenador, 2: Jugador
+    const newRoleId = user.rol_id === 1 ? 2 : 1;
     this.usersService.updateUserRole(user.id, newRoleId).subscribe({
       next: () => {
         this.users.update(currentUsers =>
@@ -62,8 +62,8 @@ export class PlayersComponent implements OnInit {
 
   // Editar
   openEditModal(user: User) {
-    this.selectedUser.set(user); // Guardamos qué usuario queremos editar
-    this.isModalOpen.set(true);  // Abrimos el modal
+    this.selectedUser.set(user); 
+    this.isModalOpen.set(true);
   }
 
   // Función para cerrarlo

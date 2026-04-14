@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, computed, signal } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { RouterLink } from '@angular/router'; // Para los botones de navegación
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { PlayersService, User } from '../../core/services/players.service';
 import { TasksService, Task } from '../../core/services/tasks.service';
@@ -8,7 +8,7 @@ import { TasksService, Task } from '../../core/services/tasks.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [AsyncPipe, RouterLink], // Importante para usar routerLink
+  imports: [AsyncPipe, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

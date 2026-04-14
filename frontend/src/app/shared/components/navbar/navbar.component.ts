@@ -25,7 +25,6 @@ export class NavbarComponent {
 
 
   openProfileModal(userFromAuth: any) {
-    // Transformamos los datos para que coincidan con la interfaz User
     const userToEdit: User = {
       id: userFromAuth.id,
       name: userFromAuth.name || '',

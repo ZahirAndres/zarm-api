@@ -1,21 +1,16 @@
-/* =====================================================
-   🏀 CoachZone — Sistema de Diseño Global
-   ===================================================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Variables ──────────────────────────────────────── */
 :root {
   /* Paleta Baloncesto */
-  --color-primary:        #F97316;   /* naranja baloncesto */
+  --color-primary:        #F97316;   
   --color-primary-dark:   #EA580C;
   --color-primary-light:  #FED7AA;
-  --color-accent:         #FBBF24;   /* amarillo dorado */
+  --color-accent:         #FBBF24; 
 
   /* Superficies */
-  --color-bg:             #0F0F0F;   /* negro profundo */
-  --color-surface:        #1A1A1A;   /* tarjetas / sidebar */
-  --color-surface-2:      #242424;   /* inputs / hover */
+  --color-bg:             #0F0F0F;  
+  --color-surface:        #1A1A1A;
+  --color-surface-2:      #242424;
   --color-border:         #2E2E2E;
 
   /* Texto */
@@ -24,8 +19,8 @@
   --color-text-soft:      #737373;
 
   /* Roles */
-  --color-coach:          #F97316;   /* naranja — Entrenador */
-  --color-player:         #3B82F6;   /* azul — Jugador */
+  --color-coach:          #F97316;
+  --color-player:         #3B82F6;
 
   /* Semánticos */
   --color-success:        #22C55E;
@@ -72,7 +67,6 @@
   --navbar-height: 64px;
 }
 
-/* ── Reset Global ───────────────────────────────────── */
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -106,7 +100,6 @@ input, select, textarea {
   font-size: var(--font-size-md);
 }
 
-/* ── Utilidades ─────────────────────────────────────── */
 
 /* Botones */
 .btn {

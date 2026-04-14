@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { AsyncPipe, DatePipe } from '@angular/common'; // Agregamos DatePipe
+import { AsyncPipe, DatePipe } from '@angular/common'; 
 import { TasksService, Task } from '../../core/services/tasks.service';
 import { AuthService } from '../../core/services/auth.service';
 import { TaskModalComponent } from './task-modal/task-modal';
@@ -8,7 +8,6 @@ import { AlertService } from '../../shared/services/alert';
 @Component({
   selector: 'app-tasks',
   standalone: true,
-  // DatePipe nos ayuda a formatear la fecha de creación fácilmente
   imports: [AsyncPipe, DatePipe, TaskModalComponent],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css'
@@ -40,11 +39,11 @@ export class TasksComponent implements OnInit {
   }
 
   loadTasks() {
-    this.isLoading.set(true); // Iniciamos carga
+    this.isLoading.set(true);
     this.tasksService.getTasks().subscribe({
       next: (data) => {
         this.tasks.set(data.sort((a, b) => b.id - a.id));
-        this.isLoading.set(false); // Finalizamos carga
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error:', err);

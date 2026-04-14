@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 export class AlertService {
 
   private swalCustom = Swal.mixin({
-    background: 'var(--color-surface)', // Fondo oscuro
+    background: 'var(--color-surface)',
     color: 'var(--color-text)',
     customClass: {
       popup: 'card',
@@ -16,7 +16,7 @@ export class AlertService {
       cancelButton: 'btn btn-ghost',
       denyButton: 'btn btn-danger'
     },
-    buttonsStyling: false               // Apagamos botones por defecto
+    buttonsStyling: false
   });
 
   // Toast de Éxito
@@ -53,7 +53,6 @@ export class AlertService {
     });
   }
 
-  // 4. Modal de Confirmación
   // Retorna una Promesa para saber lo que dijo el usuario
   confirm(title: string, text: string) {
     return this.swalCustom.fire({
