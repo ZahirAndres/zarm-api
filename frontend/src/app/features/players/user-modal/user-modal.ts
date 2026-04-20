@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular
 import { PlayersService, User } from '../../../core/services/players.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertService } from '../../../shared/services/alert';
+import { noWhitespaceValidator } from '../../../shared/validators/no-whitespace.validator';
 
 @Component({
   selector: 'app-user-modal',
@@ -22,9 +23,9 @@ export class UserModalComponent implements OnInit {
   isLoading = false; 
 
   userForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/)]],
-    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250), Validators.pattern(/^[^<>]*$/)]],
-    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/)]]
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
+    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]]
   });
   
   ngOnInit() {

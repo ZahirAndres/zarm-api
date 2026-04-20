@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Task, TasksService } from '../../../core/services/tasks.service';
 import { PlayersService, User } from '../../../core/services/players.service'; 
 import { AlertService } from '../../../shared/services/alert';
+import { noWhitespaceValidator } from '../../../shared/validators/no-whitespace.validator';
 
 @Component({
   selector: 'app-task-modal',
@@ -22,8 +23,8 @@ export class TaskModalComponent implements OnInit {
   private alertService = inject(AlertService);
 
   taskForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150), Validators.pattern(/^[^<>]*$/)]],
-    description: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/)]],
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
+    description: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
     priority: [false],
     user_id: [null, Validators.required]
   });

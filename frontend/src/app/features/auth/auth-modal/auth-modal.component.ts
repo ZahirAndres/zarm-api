@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { AlertService } from '../../../shared/services/alert';
+import { noWhitespaceValidator } from '../../../shared/validators/no-whitespace.validator';
 
 @Component({
   selector: 'app-auth-modal',
@@ -27,14 +28,14 @@ export class AuthModalComponent implements OnInit {
   private alertService = inject(AlertService);
 
   loginForm: FormGroup = this.fb.group({
-    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/)]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
     password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]]
   });
 
   registerForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/)]],
-    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250), Validators.pattern(/^[^<>]*$/)]],
-    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/)]],
+    name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
+    lastname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[^<>]*$/), noWhitespaceValidator()]],
     password: ['', [
       Validators.required, 
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)
@@ -126,6 +127,7 @@ export class AuthModalComponent implements OnInit {
         this.isLoading = false;
         if (err.status === 409) {
           this.alertService.warning('Usuario duplicado', 'Ese nombre de usuario ya está en uso.');
+          this.onClose();
         } else {
           this.alertService.error('Error', 'Ocurrió un error al crear la cuenta.');
         }
