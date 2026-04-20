@@ -35,6 +35,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/players/players.component').then(m => m.PlayersComponent)
       },
+      {
+        // Módulo de Auditoría: solo accesible para Admin (Entrenador, rol_id=1)
+        path: 'logs',
+        canActivate: [roleGuard],
+        data: { expectedRoleId: 1, expectedRoleName: 'Entrenador' },
+        loadComponent: () =>
+          import('./features/logs/logs.component').then(m => m.LogsComponent)
+      },
+      {
+        // Perfil propio: cualquier usuario autenticado puede acceder
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/profile/profile.component').then(m => m.ProfileComponent)
+      },
     ]
   },
 

@@ -1,0 +1,175 @@
+<div class="logs-container fade-in">
+
+  <!-- ── ENCABEZADO ── -->
+  <div class="logs-header">
+    <div>
+      <h1 class="page-title">
+        <span class="shield-icon">🛡️</span> Módulo de Auditoría
+      </h1>
+      <p class="text-muted mt-xs">
+        Registro completo de eventos críticos del sistema. Solo visible para Administradores.
+      </p>
+    </div>
+    <button class="btn btn-primary" (click)="loadLogs()" [disabled]="isLoading()" id="btn-refresh-logs">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+      </svg>
+      Refrescar
+    </button>
+  </div>
+
+  <!-- ── ESTADÍSTICAS RÁPIDAS ── -->
+  <div class="stats-grid mt-lg">
+    <div class="stat-card">
+      <span class="stat-icon">📋</span>
+      <div>
+        <p class="stat-value">{{ totalLogs() }}</p>
+        <p class="stat-label">Registros totales</p>
+      </div>
+    </div>
+    <div class="stat-card stat-card--danger">
+      <span class="stat-icon">🔴</span>
+      <div>
+        <p class="stat-value">{{ failedLogins() }}</p>
+        <p class="stat-label">Logins fallidos</p>
+      </div>
+    </div>
+    <div class="stat-card stat-card--critical">
+      <span class="stat-icon">💥</span>
+      <div>
+        <p class="stat-value">{{ criticalErrors() }}</p>
+        <p class="stat-label">Errores críticos (5xx)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FILTROS ── -->
+  <div class="filters-card mt-lg">
+    <h3 class="filters-title">Filtros de Consulta</h3>
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filters-form">
+
+      <div class="filter-group">
+        <label class="filter-label" for="filter-userId">ID de Usuario</label>
+        <input
+          id="filter-userId"
+          type="number"
+          class="custom-input"
+          placeholder="Ej: 1"
+          formControlName="userId" />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="filter-startDate">Fecha Inicio</label>
+        <input
+          id="filter-startDate"
+          type="date"
+          class="custom-input"
+          formControlName="startDate" />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="filter-endDate">Fecha Fin</label>
+        <input
+          id="filter-endDate"
+          type="date"
+          class="custom-input"
+          formControlName="endDate" />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="filter-errorCode">Tipo de Evento (Severidad)</label>
+        <select id="filter-errorCode" class="custom-input custom-select" formControlName="errorCode">
+          @for (type of eventTypes; track type.value) {
+            <option [value]="type.value">{{ type.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button type="submit" class="btn btn-primary" id="btn-apply-filters">
+          🔍 Filtrar
+        </button>
+        <button type="button" class="btn btn-ghost" (click)="clearFilters()" id="btn-clear-filters">
+          Limpiar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ── TABLA DE LOGS ── -->
+  <div class="table-wrapper mt-lg fade-in-up">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <p class="text-muted">Cargando registros... ⏳</p>
+      </div>
+    } @else {
+      <div class="table-container">
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Timestamp</th>
+              <th>Tipo de Evento</th>
+              <th>Severidad</th>
+              <th>Usuario</th>
+              <th>Ruta</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of logs(); track log.id) {
+              <tr [class]="getSeverityClass(log.statusCode)">
+                <td class="col-id">#{{ log.id }}</td>
+                <td class="col-date">
+                  {{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}
+                </td>
+                <td class="col-event">
+                  <span class="badge" [class]="getBadgeClass(log.errorCode)">
+                    {{ getEventLabel(log.errorCode) }}
+                  </span>
+                </td>
+                <td class="col-status">
+                  <code [class]="'status-code status-' + (log.statusCode >= 500 ? 'error' : log.statusCode >= 400 ? 'warn' : 'ok')">
+                    {{ log.statusCode }}
+                  </code>
+                </td>
+                <td class="col-user">
+                  @if (log.user) {
+                    <span title="{{ log.user.name }} {{ log.user.lastname }}">
+                      @{{ log.user.username }}
+                    </span>
+                  } @else if (log.session_id) {
+                    <span class="text-muted">ID: {{ log.session_id }}</span>
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
+                <td class="col-path">
+                  <code class="path-code">{{ log.path }}</code>
+                </td>
+                <td class="col-desc">{{ log.error }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-cell">
+                  <div class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>No se encontraron registros con los filtros aplicados.</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (logs().length > 0) {
+        <p class="results-count text-muted text-sm mt-sm">
+          Mostrando {{ logs().length }} registro(s). Máximo 500 por consulta.
+        </p>
+      }
+    }
+  </div>
+</div>
