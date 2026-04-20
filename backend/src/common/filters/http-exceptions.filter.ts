@@ -27,6 +27,16 @@ export class AllExceptionFilter implements ExceptionFilter {
         const user = request['user'];
         const sessionId = user?.id ? user.id : null;
 
+        // Determinar el errorCode específico según contexto
+        let errorCode: string;
+        if (status === 401 && request.url.includes('/auth/login')) {
+            errorCode = 'LOGIN_FAILED';
+        } else if (exception instanceof HttpException) {
+            errorCode = (exception as any).code || 'HTTP_ERROR';
+        } else {
+            errorCode = 'INTERNAL_ERROR';
+        }
+
         try {
             await this.prismaSrv.log.create({
                 data: {
@@ -34,9 +44,7 @@ export class AllExceptionFilter implements ExceptionFilter {
                     timestamp: new Date(),
                     path: request.url,
                     error: message,
-                    errorCode: exception instanceof HttpException 
-                        ? (exception as any).code || 'HTTP_ERROR'
-                        : 'INTERNAL_ERROR',
+                    errorCode,
                     session_id: sessionId,
                 },
             });
@@ -49,9 +57,7 @@ export class AllExceptionFilter implements ExceptionFilter {
             timestamp: new Date().toISOString(),
             path: request.url,
             error: message,
-            errorCode: exception instanceof HttpException 
-                ? (exception as any).code || 'HTTP_ERROR'
-                : 'INTERNAL_ERROR',
+            errorCode,
         })
     }
 }

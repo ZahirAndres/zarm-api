@@ -6,13 +6,15 @@ import { User } from './entities/user.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UtilService } from 'src/common/services/util.service';
 import { AuthGuard } from 'src/common/guards/auth.guard';
+import { PrismaService } from 'src/common/services/prisma.service';
 
 @Controller('api/user')
 @ApiTags("User")
 export class UserController {
   constructor(
     private readonly userSvc: UserService,
-    private readonly utilSvc: UtilService
+    private readonly utilSvc: UtilService,
+    private readonly prisma: PrismaService,
   ) { }
 
   @Get()
@@ -64,6 +66,21 @@ export class UserController {
     const result = await this.userSvc.updateUser(id, user);
     if (result == undefined)
       throw new HttpException(`El usuario con ${id} no existe`, HttpStatus.CONFLICT);
+
+    // Registrar evento de cambio de rol en la auditoría
+    if (user.rol_id !== undefined) {
+      await this.prisma.log.create({
+        data: {
+          statusCode: HttpStatus.OK,
+          timestamp: new Date(),
+          path: `/api/user/${id}`,
+          error: `Cambio de rol: usuario ID ${id} → rol_id=${user.rol_id} (realizado por ID: ${session.id})`,
+          errorCode: 'CHANGE_ROLE',
+          session_id: session.id,
+        },
+      });
+    }
+
     return result;
   }
 

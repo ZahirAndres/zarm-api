@@ -7,12 +7,13 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { AppException } from 'src/common/exception/app.exception';
 import { RefreshAuthGuard } from 'src/common/guards/refresh.auth.guard';
+import { PrismaService } from 'src/common/services/prisma.service';
 
 
 @Controller('api/auth')
 export class AuthController {
   
-  constructor(private authSvc: AuthService, private utilSvc: UtilService, private jwtSrv: JwtService) { }
+  constructor(private authSvc: AuthService, private utilSvc: UtilService, private jwtSrv: JwtService, private prisma: PrismaService) { }
 
   @Post("login")
   @HttpCode(HttpStatus.OK)
@@ -50,6 +51,18 @@ export class AuthController {
     refreshToken = hash; // Retornamos el hash como Refresh Token para el cliente
 
     const accessToken = await this.utilSvc.generateJWT(payload, process.env.JWT_ACCESS_EXPIRES_IN);
+
+    // Registrar evento de login exitoso en la auditoría
+    await this.prisma.log.create({
+      data: {
+        statusCode: HttpStatus.OK,
+        timestamp: new Date(),
+        path: '/api/auth/login',
+        error: `Login exitoso para el usuario: ${result.username}`,
+        errorCode: 'LOGIN_SUCCESS',
+        session_id: result.id,
+      },
+    });
 
     return { 
       accessToken,
