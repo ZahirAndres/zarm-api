@@ -10,7 +10,7 @@ export const routes: Routes = [
     path: '',
     canActivate: [publicGuard],
     loadComponent: () =>
-      import('./features/dashboard/home.component').then(m => m.HomeComponent)
+      import('./features/dashboard/home/home.component').then(m => m.HomeComponent)
   },
 
   {
