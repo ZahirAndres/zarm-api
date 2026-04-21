@@ -7,8 +7,8 @@
     <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="mt-md">
       
       <div class="form-group">
-        <label class="custom-label">Nombre del Ejercicio</label>
-        <input type="text" formControlName="name" class="custom-input" maxlength="150"
+        <label class="form-label">Nombre del Ejercicio</label>
+        <input type="text" formControlName="name" class="form-input" maxlength="150"
                [class.error]="taskForm.get('name')?.invalid && (taskForm.get('name')?.dirty || taskForm.get('name')?.touched)"
                placeholder="Ej. Tiros libres">
         
@@ -26,8 +26,8 @@
       </div>
 
       <div class="form-group mt-sm">
-        <label class="custom-label">Descripción</label>
-        <textarea formControlName="description" class="custom-input" rows="3" maxlength="200"
+        <label class="form-label">Descripción</label>
+        <textarea formControlName="description" class="form-input" rows="3" maxlength="200"
                   [class.error]="taskForm.get('description')?.invalid && (taskForm.get('description')?.dirty || taskForm.get('description')?.touched)"
                   placeholder="Instrucciones del ejercicio..."></textarea>
         
@@ -45,8 +45,8 @@
       </div>
 
       <div class="form-group mt-sm">
-        <label class="custom-label">Asignar a Jugador</label>
-        <select formControlName="user_id" class="custom-input"
+        <label class="form-label">Asignar a Jugador</label>
+        <select formControlName="user_id" class="form-input"
                 [class.error]="taskForm.get('user_id')?.invalid && (taskForm.get('user_id')?.dirty || taskForm.get('user_id')?.touched)">
           <option [ngValue]="null" disabled>Selecciona un jugador...</option>
           @for (player of players; track player.id) {
@@ -60,7 +60,7 @@
       </div>
 
       <div class="form-group mt-sm">
-        <label class="custom-label">Nivel de Prioridad</label>
+        <label class="form-label">Nivel de Prioridad</label>
         <label class="toggle-switch">
           <input type="checkbox" formControlName="priority">
           <div class="toggle-slider"></div>

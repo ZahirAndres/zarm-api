@@ -3,6 +3,7 @@ import { PrismaService } from 'src/common/services/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entities/task.entity';
 import { UpdateTaskDto } from './dto/update.task.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class TaskService {
@@ -10,23 +11,30 @@ export class TaskService {
     private prisma: PrismaService,
   ) { }
 
-  async getTasks(user_id: number) {
-    if (user_id === 2) {
+  async getTasks(user: User) {
+    if (user.rol_id === 1) {
+      // Admin ve todas
       return this.prisma.task.findMany();
     } else {
+      // Usuario regular ve solo las suyas
       return this.prisma.task.findMany({
-        where: {
-          user_id
-        }
+        where: { user_id: user.id }
       });
     }
   }
 
-  async getTaskById(id: number, user_id: number): Promise<Task | null> {
-    const task = await this.prisma.task.findUnique({
-      where: { id, user_id }
-    });
-    return task;
+  async getTaskById(id: number, user: User): Promise<Task | null> {
+    if (user.rol_id === 1) {
+      return this.prisma.task.findUnique({
+        where: { id }
+      });
+    } else {
+      const task = await this.prisma.task.findUnique({ where: { id } });
+      if (task && task.user_id === user.id) {
+        return task;
+      }
+      return null;
+    }
   }
 
   async insertTask(task: CreateTaskDto): Promise<Task> {

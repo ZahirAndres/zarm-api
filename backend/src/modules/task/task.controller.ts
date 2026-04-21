@@ -20,13 +20,13 @@ export class TaskController {
   @Get()
   public async getTasks(@Req() request: any): Promise<Task[]> {
     const user = request['user'] as User;
-    return await this.taskSvc.getTasks(user.id);
+    return await this.taskSvc.getTasks(user);
   }
 
   @Get(":id")
   public async getTaskById(@Param("id", ParseIntPipe) id: number, @Req() request: any): Promise<Task> {
     const user = request['user'] as User;
-    const result = await this.taskSvc.getTaskById(id, user.id);
+    const result = await this.taskSvc.getTaskById(id, user);
     if (result == undefined)
       throw new HttpException(`Tarea con ID ${id} no encontrada`, HttpStatus.NOT_FOUND);
     return result;
