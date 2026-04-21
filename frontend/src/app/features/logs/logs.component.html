@@ -51,36 +51,36 @@
     <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filters-form">
 
       <div class="filter-group">
-        <label class="filter-label" for="filter-userId">ID de Usuario</label>
+        <label class="form-label" for="filter-userId">ID de Usuario</label>
         <input
           id="filter-userId"
           type="number"
-          class="custom-input"
+          class="form-input"
           placeholder="Ej: 1"
           formControlName="userId" />
       </div>
 
       <div class="filter-group">
-        <label class="filter-label" for="filter-startDate">Fecha Inicio</label>
+        <label class="form-label" for="filter-startDate">Fecha Inicio</label>
         <input
           id="filter-startDate"
           type="date"
-          class="custom-input"
+          class="form-input"
           formControlName="startDate" />
       </div>
 
       <div class="filter-group">
-        <label class="filter-label" for="filter-endDate">Fecha Fin</label>
+        <label class="form-label" for="filter-endDate">Fecha Fin</label>
         <input
           id="filter-endDate"
           type="date"
-          class="custom-input"
+          class="form-input"
           formControlName="endDate" />
       </div>
 
       <div class="filter-group">
-        <label class="filter-label" for="filter-errorCode">Tipo de Evento (Severidad)</label>
-        <select id="filter-errorCode" class="custom-input custom-select" formControlName="errorCode">
+        <label class="form-label" for="filter-errorCode">Tipo de Evento (Severidad)</label>
+        <select id="filter-errorCode" class="form-input" formControlName="errorCode">
           @for (type of eventTypes; track type.value) {
             <option [value]="type.value">{{ type.label }}</option>
           }

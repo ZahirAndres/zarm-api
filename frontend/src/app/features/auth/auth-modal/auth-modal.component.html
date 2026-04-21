@@ -16,7 +16,7 @@
     <div class="slider-wrapper">
       <div class="slider-track" [style.transform]="activeMode === 'login' ? 'translateX(0)' : 'translateX(-50%)'">
 
-        <div class="slider-panel">
+        <div class="slider-panel" [attr.inert]="activeMode !== 'login' ? '' : null">
           <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
             <div class="text-center mb-xl">
               <h2 class="form-title">Bienvenido de vuelta</h2>
@@ -75,7 +75,7 @@
           </form>
         </div>
 
-        <div class="slider-panel">
+        <div class="slider-panel" [attr.inert]="activeMode !== 'register' ? '' : null">
           <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
             <div class="text-center mb-xl">
               <h2 class="form-title">Nueva cuenta</h2>
