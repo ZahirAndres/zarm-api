@@ -43,12 +43,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/logs/logs.component').then(m => m.LogsComponent)
       },
-      {
-        // Perfil propio: cualquier usuario autenticado puede acceder
-        path: 'profile',
-        loadComponent: () =>
-          import('./features/profile/profile.component').then(m => m.ProfileComponent)
-      },
     ]
   },
 

@@ -36,7 +36,15 @@ export class TaskController {
   @ApiOperation({ summary: 'Insert a task in the database' })
   public async insertTask(@Body() task: CreateTaskDto, @Req() request: any): Promise<Task> {
     const user = request['user'];
-    task.user_id = user.id;
+    
+    // Si no es un Entrenador (Admin), forzamos a que la tarea sea asignada a sí mismo.
+    // Si es un Admin, respetamos el user_id asignado en el DTO, o usamos el suyo por defecto.
+    if (user.rol_id !== 1) {
+      task.user_id = user.id;
+    } else if (!task.user_id) {
+      task.user_id = user.id;
+    }
+
     const result = await this.taskSvc.insertTask(task);
     if (result == undefined)
       throw new HttpException(`Error al insertar la tarea`, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,7 +55,7 @@ export class TaskController {
         statusCode: HttpStatus.CREATED,
         timestamp: new Date(),
         path: '/api/task',
-        error: `Tarea creada: "${task.name}" por el usuario ID: ${user.id}`,
+        error: `Tarea creada: "${task.name}" para el usuario ID: ${task.user_id} (por usuario ID: ${user.id})`,
         errorCode: 'CREATE_TASK',
         session_id: user.id,
       },
